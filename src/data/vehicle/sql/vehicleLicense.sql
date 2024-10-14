@@ -1,0 +1,1 @@
+SELECT * FROm vehicles WHERE license_plate = ? ;

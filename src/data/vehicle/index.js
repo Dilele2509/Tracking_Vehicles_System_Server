@@ -28,5 +28,98 @@ const getVehicleById = async (id) => {
     }
 };
 
+const getVehicleByUserID = async (userID) => {
+    try {
+        const sqlQueries = await loadSqlQueries('vehicle/sql');
+        const [vehicle] = await pool.query(sqlQueries.vehicleUserID, [userID]);
+        return vehicle;
+    } catch (error) {
+        console.error('Error fetching vehicle by ID:', error.message);
+        throw new Error('Could not fetch vehicle');
+    }
+};
 
-module.exports = { getVehicles, getVehicleById };
+
+const getVehiclesByBrandName = async (brandName) => {
+    try {
+    const sqlQueries = await loadSqlQueries('vehicle/sql');
+    const [vehicle] = await pool.query(sqlQueries.vehicleBrandName, [brandName]);
+    return vehicle; 
+
+    } catch (error){
+        console.error('Error fetching vehicle by ID:', error.message);
+        throw new Error('Could not fetch vehicle');
+    }
+};
+
+const getVehiclesByLicensePlate = async (licensePlate) => {
+    try {
+        const sqlQueries = await loadSqlQueries('vehicle/sql');
+        const [vehicle] = await pool.query(sqlQueries.vehicleLicense, [licensePlate]);
+        return vehicle; 
+    } catch (error) {
+        console.error('Error fetching vehicles by license plate:', error.message);
+        throw new Error('Could not fetch vehicles');
+    }
+};
+
+
+const updateVehicleStatus = async (id, isDisable = true) => {
+    try {
+        const sqlQueries = await loadSqlQueries('vehicle/sql');
+        const query = isDisable 
+            ? sqlQueries.disableStatus // Load from disableStatus.sql
+            : sqlQueries.enableStatus; // Load from enableStatus.sql
+        const result = await pool.query(query, [id]);
+        return result;
+    } catch (error) {
+        console.error('Error updating vehicle status:', error.message);
+        throw new Error('Could not update vehicle status');
+    }
+}
+
+
+const addNewVehicle = async (data) => {
+    try {
+        const sqlQueries = await loadSqlQueries('vehicle/sql');
+        const result = await pool.query(sqlQueries.addVehicle, [ 
+            data.id,
+            data.device_id,
+            data.owner_id,
+            data.driver_id,
+            data.vehicle_brand,
+            data.vehicle_line,
+            data.thumbnail,
+            data.license_plate,
+            data.location,
+            data.status,
+            data.parked_time,
+            data.km_per_day,
+            data.deleted
+        ]);
+        return result; // Return the added vehicle info
+    } catch (error) {
+        console.error('Error adding new vehicle:', error.message);
+        throw new Error('Could not add vehicle');
+    }
+};
+
+// Function to generate the next vehicle ID
+const generateVehicleId = async () => {
+    const sqlQueries = await loadSqlQueries('vehicle/sql');
+    const [result] = await pool.query(sqlQueries.getMaxVehicleId);
+    const maxId = result[0]?.id || 'VEH000'; // Default if no vehicles exist
+    const nextIdNumber = parseInt(maxId.replace('VEH', '')) + 1;
+    return `VEH${nextIdNumber.toString().padStart(3, '0')}`; // Format to VEH001, VEH002, etc.
+};
+
+module.exports = { 
+    getVehicles, 
+    getVehicleById, 
+    getVehicleByUserID, 
+    getVehiclesByBrandName, 
+    getVehiclesByLicensePlate,
+    updateVehicleStatus,
+    addNewVehicle,
+    generateVehicleId
+};

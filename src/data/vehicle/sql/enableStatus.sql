@@ -1,0 +1,1 @@
+UPDATE vehicles SET deleted = 0 WHERE id = ? AND deleted = 1

@@ -1,0 +1,1 @@
+SELECT id FROM vehicles ORDER BY id DESC LIMIT 1
