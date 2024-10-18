@@ -68,8 +68,8 @@ const updateVehicleStatus = async (id, isDisable = true) => {
     try {
         const sqlQueries = await loadSqlQueries('vehicle/sql');
         const query = isDisable 
-            ? sqlQueries.disableStatus // Load from disableStatus.sql
-            : sqlQueries.enableStatus; // Load from enableStatus.sql
+            ? sqlQueries.disableStatus 
+            : sqlQueries.enableStatus; 
         const result = await pool.query(query, [id]);
         return result;
     } catch (error) {
@@ -79,11 +79,11 @@ const updateVehicleStatus = async (id, isDisable = true) => {
 }
 
 
-const addNewVehicle = async (data) => {
+const addNewVehicle = async (newId,data) => {
     try {
         const sqlQueries = await loadSqlQueries('vehicle/sql');
         const result = await pool.query(sqlQueries.addVehicle, [ 
-            data.id,
+            newId,
             data.device_id,
             data.owner_id,
             data.driver_id,
@@ -97,7 +97,7 @@ const addNewVehicle = async (data) => {
             data.km_per_day,
             data.deleted
         ]);
-        return result; // Return the added vehicle info
+        return result; 
     } catch (error) {
         console.error('Error adding new vehicle:', error.message);
         throw new Error('Could not add vehicle');
@@ -113,6 +113,32 @@ const generateVehicleId = async () => {
     return `VEH${nextIdNumber.toString().padStart(3, '0')}`; // Format to VEH001, VEH002, etc.
 };
 
+const updateVehicleInfo = async (data) => {
+    try {
+        const sqlQueries = await loadSqlQueries('vehicle/sql');
+        const locationWKT = `POINT(${data.location.longitude} ${data.location.latitude})`; // Adjust based on your data structure
+        const result = await pool.query(sqlQueries.updateVehicle, [ 
+            data.device_id,
+            data.owner_id,
+            data.driver_id,
+            data.vehicle_brand,
+            data.vehicle_line,
+            data.thumbnail,
+            data.license_plate,
+            locationWKT, 
+            data.status,
+            data.parked_time,
+            data.km_per_day,
+            data.deleted,
+            data.id 
+        ]);
+        return result; 
+    } catch (error) {
+        console.error('Error updating vehicle:', error.message);
+        throw new Error('Could not update vehicle');
+    }
+};
+
 module.exports = { 
     getVehicles, 
     getVehicleById, 
@@ -121,5 +147,6 @@ module.exports = {
     getVehiclesByLicensePlate,
     updateVehicleStatus,
     addNewVehicle,
-    generateVehicleId
+    generateVehicleId,
+    updateVehicleInfo
 };

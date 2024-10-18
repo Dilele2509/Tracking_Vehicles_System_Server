@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser');
 
 // Import routes
 const { routes } = require('./src/routes/vehicleRoutes.js');
+// const {routes} = require('./src/routes/licenseRoutes.js');
 
 const app = express();
 

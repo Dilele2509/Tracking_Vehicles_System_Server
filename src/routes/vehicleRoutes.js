@@ -8,7 +8,8 @@ const { getAllVehicle,
         getByLicensePlate,
         disableVehicle,
         enableVehicle,
-        addVehicle} = require('../controllers/vehicleController');
+        addVehicle,
+        updateVehicle} = require('../controllers/vehicleController');
 
 const router = express.Router();
 
@@ -20,5 +21,6 @@ router.post('/vehicles-license-plate', getByLicensePlate);
 router.put('/vehicles/disable', disableVehicle); 
 router.put('/vehicles/enable', enableVehicle);
 router.post('/vehicles/add', addVehicle);
+router.put('/vehicles/update', updateVehicle); 
 
 module.exports = { routes: router };

@@ -7,7 +7,8 @@ const { getVehicles,
     getVehiclesByLicensePlate, 
     updateVehicleStatus,
     addNewVehicle,    
-    generateVehicleId } = require('../data/vehicle');
+    generateVehicleId,
+    updateVehicleInfo } = require('../data/vehicle');
 
 const getAllVehicle = async (req, res) => {
     try {
@@ -63,7 +64,7 @@ const getByLicensePlate = async (req, res) => {
 
 const disableVehicle = async (req, res) => {
     try {
-        const id = req.body.id; // Ensure the ID is being sent in the request body
+        const id = req.body.id; 
         const result = await updateVehicleStatus(id);
         if (result.affectedRows === 0) {
             return res.status(404).send({ error: 'Vehicle not found or already deleted.' });
@@ -96,32 +97,28 @@ const addVehicle = async (req, res) => {
         // Generate the new vehicle ID
         const newId = await generateVehicleId();
 
-        // const newVehicle = {
-        //     id: newId,
-        //     device_id,
-        //     owner_id,
-        //     driver_id: null,
-        //     vehicle_brand,
-        //     vehicle_line,
-        //     thumbnail,
-        //     license_plate,
-        //     location: null,
-        //     status,
-        //     parked_time: null,
-        //     km_per_day: null,
-        //     deleted
-        // };
-
-        const result = await addNewVehicle(data);
+        const result = await addNewVehicle(newId, data);
         res.send({ status: 'success', added: result });
-
-        console.log(newId);
-        console.log("kkk")
     } catch (error) {
         res.status(400).send({ status: 'fail', error: error.message });
     }
 };
 
+
+const updateVehicle = async (req, res) => {
+    try {
+        const data = req.body; 
+        const result = await updateVehicleInfo(data); 
+
+        if (result.affectedRows === 0) {
+            return res.status(404).send({ status: 'fail' }); 
+        }
+
+        res.send({ status: 'success', update: result }); 
+    } catch (error) {
+        res.status(400).send({ status: 'fail', error: error.message });
+    }
+};
 
 
 module.exports = { 
@@ -132,5 +129,6 @@ module.exports = {
     getByLicensePlate,
     disableVehicle,
     enableVehicle,
-    addVehicle 
+    addVehicle,
+    updateVehicle
 };
