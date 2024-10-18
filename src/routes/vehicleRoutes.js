@@ -13,7 +13,7 @@ const { getAllVehicle,
 
 const router = express.Router();
 
-router.get('/vehicles', getAllVehicle);
+router.get('/get-all', getAllVehicle);
 router.post('/vehicle-id', getById);
 router.post('/vehicles-user-id', getByUserID);
 router.post('/vehicles-brand', getByBrandName);

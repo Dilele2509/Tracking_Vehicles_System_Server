@@ -6,9 +6,9 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
-// Import routes
-const { routes } = require('./src/routes/vehicleRoutes.js');
-// const {routes} = require('./src/routes/licenseRoutes.js');
+// Import routes with different variable names
+const { routes: vehicleRoutes } = require('./src/routes/vehicleRoutes.js');
+const { routes: licenseRoutes } = require('./src/routes/licenseRoutes.js');
 
 const app = express();
 
@@ -23,7 +23,8 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 // Serve static files
-app.use('/api/', routes);
+app.use('/api/vehicles', vehicleRoutes);
+app.use('/api/licenses', licenseRoutes);
 
 // Start the server
 app.listen(config.port, () => {
