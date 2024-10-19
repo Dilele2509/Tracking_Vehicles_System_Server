@@ -1,0 +1,1 @@
+DELETE FROM driving_license WHERE id = ?;

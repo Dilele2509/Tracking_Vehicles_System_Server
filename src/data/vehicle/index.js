@@ -108,9 +108,9 @@ const addNewVehicle = async (newId,data) => {
 const generateVehicleId = async () => {
     const sqlQueries = await loadSqlQueries('vehicle/sql');
     const [result] = await pool.query(sqlQueries.getMaxVehicleId);
-    const maxId = result[0]?.id || 'VEH000'; // Default if no vehicles exist
+    const maxId = result[0]?.id || 'VEH000'; 
     const nextIdNumber = parseInt(maxId.replace('VEH', '')) + 1;
-    return `VEH${nextIdNumber.toString().padStart(3, '0')}`; // Format to VEH001, VEH002, etc.
+    return `VEH${nextIdNumber.toString().padStart(3, '0')}`; 
 };
 
 const updateVehicleInfo = async (data) => {

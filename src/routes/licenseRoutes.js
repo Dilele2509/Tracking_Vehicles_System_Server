@@ -1,10 +1,12 @@
 'use strict';
 
 const express = require('express');
-const { addLicenseController } = require('../controllers/licenseController');
+const { addLicenseController, updateLicenseController, deleteLicenseController } = require('../controllers/licenseController');
 
 const router = express.Router();
 
-router.post('/licenses/add', addLicenseController);
+router.post('/add', addLicenseController);
+router.put('/update', updateLicenseController);
+router.delete('/delete', deleteLicenseController); 
 
 module.exports = { routes: router };

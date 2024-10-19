@@ -14,13 +14,13 @@ const { getAllVehicle,
 const router = express.Router();
 
 router.get('/get-all', getAllVehicle);
-router.post('/vehicle-id', getById);
-router.post('/vehicles-user-id', getByUserID);
-router.post('/vehicles-brand', getByBrandName);
-router.post('/vehicles-license-plate', getByLicensePlate);
-router.put('/vehicles/disable', disableVehicle); 
-router.put('/vehicles/enable', enableVehicle);
-router.post('/vehicles/add', addVehicle);
-router.put('/vehicles/update', updateVehicle); 
+router.post('/id', getById);
+router.post('/user-id', getByUserID);
+router.post('/brand', getByBrandName);
+router.post('/license-plate', getByLicensePlate);
+router.put('/disable', disableVehicle); 
+router.put('/enable', enableVehicle);
+router.post('/add', addVehicle);
+router.put('/update', updateVehicle); 
 
 module.exports = { routes: router };
