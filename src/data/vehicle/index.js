@@ -139,6 +139,18 @@ const updateVehicleInfo = async (data) => {
     }
 };
 
+// Function to delete a vehicle
+const deleteVehicle = async (id) => {
+    try {
+        const sqlQueries = await loadSqlQueries('vehicle/sql');
+        await pool.query(sqlQueries.deleteVehicle, [id]);
+        // No output is needed, just a successful deletion
+    } catch (error) {
+        console.error('Error deleting vehicle:', error.message);
+        throw new Error('Could not delete vehicle');
+    }
+};
+
 module.exports = { 
     getVehicles, 
     getVehicleById, 
@@ -148,5 +160,6 @@ module.exports = {
     updateVehicleStatus,
     addNewVehicle,
     generateVehicleId,
-    updateVehicleInfo
+    updateVehicleInfo,
+    deleteVehicle // Export the delete function
 };

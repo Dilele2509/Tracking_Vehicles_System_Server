@@ -8,7 +8,8 @@ const { getVehicles,
     updateVehicleStatus,
     addNewVehicle,    
     generateVehicleId,
-    updateVehicleInfo } = require('../data/vehicle');
+    updateVehicleInfo,
+    deleteVehicle } = require('../data/vehicle');
 
 const getAllVehicle = async (req, res) => {
     try {
@@ -121,6 +122,18 @@ const updateVehicle = async (req, res) => {
 };
 
 
+// Controller function to delete a vehicle
+const deleteVehicleController = async (req, res) => {
+    const { id } = req.body;
+
+    try {
+        await deleteVehicle(id);
+        res.send({ message: 'Vehicle deleted successfully.' });
+    } catch (error) {
+        res.status(400).send({ error: error.message });
+    }
+};
+
 module.exports = { 
     getAllVehicle, 
     getById, 
@@ -130,5 +143,6 @@ module.exports = {
     disableVehicle,
     enableVehicle,
     addVehicle,
-    updateVehicle
+    updateVehicle,
+    deleteVehicle: deleteVehicleController // Export the delete function
 };
