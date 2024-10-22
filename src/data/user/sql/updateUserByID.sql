@@ -1,6 +1,6 @@
 
 UPDATE users
-SET id = ?,
+SET 
     fullname = ?,
     birthday = ?,
     phone_number = ?,

@@ -32,11 +32,20 @@ const updateUser = async (userId, data) => {
                                                     data.phone_number,
                                                     data.email]); 
 
-        return result[0]; 
+        return result; 
     } catch (error) {
         console.error('Database update error:', error); 
         throw new Error('Database update failed'); 
     }
 };
 
-module.exports = { findById, updateUser }; 
+// Function to check user password
+const checkUserPassword = async (userId) => {
+    const user = await findById(userId); 
+    if (!user) {
+        throw new Error('User not found'); 
+    }
+    return user.password; 
+};
+
+module.exports = { findById, updateUser, checkUserPassword }; 

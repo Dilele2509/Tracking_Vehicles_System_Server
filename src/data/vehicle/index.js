@@ -116,7 +116,7 @@ const generateVehicleId = async () => {
 const updateVehicleInfo = async (data) => {
     try {
         const sqlQueries = await loadSqlQueries('vehicle/sql');
-        const locationWKT = `POINT(${data.location.longitude} ${data.location.latitude})`; // Adjust based on your data structure
+        const locationWKT = `POINT(${data.location.longitude} ${data.location.latitude})`;
         const result = await pool.query(sqlQueries.updateVehicle, [ 
             data.device_id,
             data.owner_id,
