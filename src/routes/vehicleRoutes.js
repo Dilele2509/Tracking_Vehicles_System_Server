@@ -11,7 +11,7 @@ const {
     enableVehicle,
     addVehicle,
     updateVehicle,
-    deleteVehicle // Import the delete function
+    deleteVehicle 
 } = require('../controllers/vehicleController');
 
 const router = express.Router();
@@ -25,6 +25,6 @@ router.put('/disable', disableVehicle);
 router.put('/enable', enableVehicle);
 router.post('/add', addVehicle);
 router.put('/update', updateVehicle);
-router.delete('/delete', deleteVehicle); // Added route for deleting a vehicle
+router.delete('/delete', deleteVehicle); 
 
 module.exports = { routes: router };

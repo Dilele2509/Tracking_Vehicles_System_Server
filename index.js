@@ -9,6 +9,8 @@ const cookieParser = require('cookie-parser');
 // Import routes with different variable names
 const { routes: vehicleRoutes } = require('./src/routes/vehicleRoutes.js');
 const { routes: licenseRoutes } = require('./src/routes/licenseRoutes.js');
+const { routes: userRoutes } = require('./src/routes/userRoutes.js');
+// const { routes: loginRoutes } = require('./src/routes/loginRoutes.js');
 
 const app = express();
 
@@ -25,6 +27,8 @@ app.use(cookieParser());
 // Serve static files
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/licenses', licenseRoutes);
+app.use('/api/user', userRoutes);
+// app.use('/api/login', loginRoutes);
 
 // Start the server
 app.listen(config.port, () => {
