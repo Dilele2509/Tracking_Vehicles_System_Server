@@ -1,18 +1,18 @@
-// 'use strict';
+'use strict';
 
-// const express = require('express');
-// // const {
-// //     checkLogin,
-// //     checkLoginStatus,
-// //     logout } = require('../controllers/loginController');
-// // const router = express.Router();
+const express = require('express');
+const {
+    // checkLoginController,
+    checkLoginStatus,
+    logout, } = require('../controllers/loginController');
+const router = express.Router();
 
-// // router.post('/login', checkLogin);
-// // router.get('/login/check-status/', checkLoginStatus);
-// // router.get('/logout', logout);
+// router.post('/check-login', checkLoginController);
+router.post('/check-status/', checkLoginStatus);
+router.post('/logout', logout);
 
 
 
-// // module.exports = {
-// //     routes: router
-// // }
+module.exports = {
+    routes: router
+}
