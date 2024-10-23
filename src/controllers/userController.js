@@ -1,7 +1,7 @@
 'use strict';
 
 const bcrypt = require('bcrypt');
-const { findById, updateUser, checkUserPassword } = require('../data/user'); 
+const { findById, updateUser, checkUserPassword, updatePasswordByID, createUser, generateUserID, deleteUser, updateUserStatus } = require('../data/user'); 
 
 
 const getInfoById = async (req, res) => {
@@ -51,25 +51,17 @@ const updateUserInfo = async (req, res) => {
 const checkPassword = async (req, res) => {
     try {
         const userId = req.cookies.userId; 
-        const { password } = req.body; // Get the plain text password from the request body
+        const { password } = req.body; 
 
         if (!userId) {
             return res.status(400).json({ message: 'User ID not found in cookies' });
         }
+        const storedPassword = await checkUserPassword(userId); 
 
-        // Retrieve the stored hashed password for comparison
-        const storedHashedPassword = await checkUserPassword(userId); 
+        // const hashedStoredPassword = await bcrypt.hash(storedHashedPassword, 10)
 
-        const hashedStoredPassword = await bcrypt.hash(storedHashedPassword, 10)
-
-        // Log the passwords for debugging
-        console.log("Plain text password:", password);
-        console.log("Stored hashed password:", storedHashedPassword);
-
-        // Compare the plain text password with the stored hashed password
-        const isPasswordValid = await bcrypt.compare(password, hashedStoredPassword); 
-        console.log("Is password valid:", isPasswordValid); // Log the result of the comparison
-
+        const isPasswordValid = (password === storedPassword); 
+        //    const isPasswordValid = await bcrypt.compare(password, hashedStoredPassword); 
 
         return res.status(200).json({ status: isPasswordValid });
     } catch (error) {
@@ -79,4 +71,82 @@ const checkPassword = async (req, res) => {
 };
 
 
-module.exports = { getInfoById, updateUserInfo, checkPassword }; 
+const updatePassword = async (req, res) => {
+    try {
+        const userId = req.cookies.userId; 
+        const { newPassword } = req.body; 
+        if (!userId) {
+            return res.status(400).json({ message: 'User ID not found in cookies' });
+        }
+
+        // const hashedPassword = await bcrypt.hash(newPassword, 10);
+        const result = await updatePasswordByID(userId, newPassword ); 
+
+        return res.status(200).json({ status: result.affectedRows > 0 }); 
+    } catch (error) {
+        console.error('Error updating password:', error); 
+        return res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+
+const addNewUser = async (req, res) => {
+    try {
+        const data = req.body;
+
+        if (!data.role_id || !data.fullname || !data.email || !data.password) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+
+        const newId = await generateUserID();
+        // Create the user
+        const result = await createUser(newId, data);
+
+        return res.status(201).json({ status: 'User created', added: result});
+    } catch (error) {
+        console.error('Error creating user:', error);
+        return res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+const deleteUserController = async (req, res) => {
+    const { id } = req.body;
+
+    try {
+        await deleteUser(id);
+        res.send({ message: 'User deleted successfully.' });
+    } catch (error) {
+        res.status(400).send({ error: error.message });
+    }
+};
+
+
+const disableUser = async (req, res) => {
+    try {
+        const id = req.body.id; 
+        const result = await updateUserStatus(id);
+        if (result.affectedRows === 0) {
+            return res.status(404).send({ error: 'User not found or already deleted.' });
+        }
+        res.send({ message: 'User disabled successfully.' });
+    } catch (error) {
+        res.status(400).send({ error: error.message });
+    }
+}
+
+const enableUser = async (req, res) => {
+    try {
+        const id = req.body.id; 
+        const result = await updateUserStatus(id, false); 
+        if (result.affectedRows === 0) {
+            return res.status(404).send({ error: 'User not found or not deleted.' });
+        }
+        res.send({ message: 'User enabled successfully.' });
+    } catch (error) {
+        res.status(400).send({ error: error.message });
+    }
+}
+
+
+module.exports = { getInfoById, updateUserInfo, checkPassword, updatePassword, addNewUser, deleteUserController, disableUser, enableUser };
+
