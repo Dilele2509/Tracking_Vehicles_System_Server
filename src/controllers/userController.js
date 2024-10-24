@@ -1,7 +1,7 @@
 'use strict';
 
-const bcrypt = require('bcrypt');
-const { findById, updateUser, checkUserPassword, updatePasswordByID, createUser, generateUserID, deleteUser, updateUserStatus } = require('../data/user'); 
+// const bcrypt = require('bcrypt');
+const { findById, updateUser, checkUserPassword, updatePasswordByID, createUser, generateUserID, deleteUser, updateUserStatus} = require('../data/user'); 
 
 
 const getInfoById = async (req, res) => {
@@ -28,6 +28,7 @@ const getInfoById = async (req, res) => {
         return res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
+
 
 const updateUserInfo = async (req, res) => {
     try {

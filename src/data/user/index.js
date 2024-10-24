@@ -18,6 +18,31 @@ const findById = async (userId) => {
     }
 };
 
+const getUserByEmail = async (email) => {
+    const queries = await loadSqlQueries('user/sql');
+    const query = queries.getUserByEmail;
+    
+    try {
+        const [result] = await pool.execute(query, [email]); 
+        return result[0]
+    } catch (error) {
+        console.error('Database query error:', error); 
+        throw new Error('Database query failed'); 
+    }
+};
+
+const checkEmailExist = async(email) => {
+    try {
+        const sqlQueries = await loadSqlQueries('user/sql');
+        const check = await pool.request()
+                        .input('email', sql.VarChar, email)
+                        .query(sqlQueries.checkEmailExist);
+       return check.recordset[0].Result;
+    } catch (error) {
+        return error.message;
+    }
+}
+
 const updateUser = async (userId, data) => {
     const queries = await loadSqlQueries('user/sql');
     const query = queries.updateUserByID; 
@@ -118,4 +143,4 @@ const updateUserStatus = async (id, isDisable = true) => {
 
 
 
-module.exports = { findById, updateUser, checkUserPassword, updatePasswordByID, createUser, generateUserID, deleteUser, updateUserStatus };
+module.exports = { findById, updateUser, checkUserPassword, updatePasswordByID, createUser, generateUserID, deleteUser, updateUserStatus, getUserByEmail, checkEmailExist };

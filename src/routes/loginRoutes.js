@@ -2,12 +2,12 @@
 
 const express = require('express');
 const {
-    // checkLoginController,
+    loginController,
     checkLoginStatus,
     logout, } = require('../controllers/loginController');
 const router = express.Router();
 
-// router.post('/check-login', checkLoginController);
+router.post('/user-login', loginController);
 router.post('/check-status/', checkLoginStatus);
 router.post('/logout', logout);
 

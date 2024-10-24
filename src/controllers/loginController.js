@@ -1,29 +1,29 @@
 'use strict';
 
-const { checkLogin,
-        checkPassword } = require('../data/login');
+const {checkLogin, checkPassword}  = require('../data/login'); 
+const {getUserByEmail, checkEmailExist}  = require('../data/user'); 
 
 
-const checkLoginController = async (req, res) => {
+const loginController = async (req, res) => {
     try {
         const data = req.body;
-        const check = await loginData.checkLogin(data);
-        if(check === 1){
-            const userInfo = await userData.getByEmail(data);
+        const login = await checkLogin(data);
+        if(login === 1){
+            const userInfo = await getUserByEmail(data);
             //console.log(userInfo[0].id);
             // Set the user ID in a cookie
             res.cookie('userId', userInfo[0].id,{ httpOnly: true });
             return res.send(userInfo);
         }else{
-            const checkEmail = await userData.checkEmailExist(data.email);
-            const checkPassword = await loginData.checkPassword(data.password);
+            const checkEmail = await checkEmailExist(data.email);
+            const checkPasswordTrue = await checkPassword(data.password);
             if(checkEmail !== 1){
                 return res.send({
                     status: 'Error',
                     problem: 'Email',
                     message: 'This email does not exist'
                 })
-            }else if(checkPassword !== 1){
+            }else if(checkPasswordTrue !== 1){
                 return res.send({
                     status: 'Error',
                     problem: 'Password',
@@ -69,7 +69,7 @@ const logout = (req, res) => {
   };
 
 module.exports = {
-    checkLoginController,
+    loginController,
     checkLoginStatus,
     logout
 }
