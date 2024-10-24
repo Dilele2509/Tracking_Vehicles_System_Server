@@ -7,15 +7,14 @@ const { loadSqlQueries } = require('../utils.js');
 const pool = mysql.createPool(config.sql);
 
 const checkLogin = async (data) => {
-    try {
-        const sqlQueries = await loadSqlQueries('login/sql');
-        //console.log(sqlQueries);
-        const check = await pool.request()
-            .input('email', sql.VarChar, data.email)
-            .input('password', sql.NVarChar(10), data.password) 
-            .query(sqlQueries.checkLogin);
 
-        return check.recordset[0].Result;
+    
+    try {
+
+        const sqlQueries = await loadSqlQueries('login/sql');
+        const query = sqlQueries.checkLogin;
+        const [result] = await pool.execute(query, [data.email, data.password]);
+        return result[0].Result
     } catch (error) {
         return error.message;
     }
@@ -24,10 +23,10 @@ const checkLogin = async (data) => {
 const checkPassword = async (password) => {
     try {
         const sqlQueries = await loadSqlQueries('login/sql');
-        const check = await pool.request()
-                        .input('password', sql.VarChar, password)
-                        .query(sqlQueries.checkPassword);
-        return check.recordset[0].Result;
+        const query = sqlQueries.checkPassword;
+
+        const [result] = await pool.execute(query, [password]);
+        return result[0].Result
     } catch (error) {
         return error.message;
     }

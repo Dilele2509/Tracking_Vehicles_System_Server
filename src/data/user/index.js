@@ -34,10 +34,9 @@ const getUserByEmail = async (email) => {
 const checkEmailExist = async(email) => {
     try {
         const sqlQueries = await loadSqlQueries('user/sql');
-        const check = await pool.request()
-                        .input('email', sql.VarChar, email)
-                        .query(sqlQueries.checkEmailExist);
-       return check.recordset[0].Result;
+        const query = sqlQueries.checkEmailExist;  
+       const [result] = await pool.execute(query, [email]); 
+        return result[0].Result
     } catch (error) {
         return error.message;
     }
