@@ -142,4 +142,14 @@ const updateUserStatus = async (id, isDisable = true) => {
 
 
 
-module.exports = { findById, updateUser, checkUserPassword, updatePasswordByID, createUser, generateUserID, deleteUser, updateUserStatus, getUserByEmail, checkEmailExist };
+module.exports = { 
+    findById, 
+    updateUser, 
+    checkUserPassword, 
+    updatePasswordByID, 
+    createUser, 
+    generateUserID, 
+    deleteUser, 
+    updateUserStatus, 
+    getUserByEmail, 
+    checkEmailExist };

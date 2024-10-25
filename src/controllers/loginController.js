@@ -10,8 +10,6 @@ const loginController = async (req, res) => {
         const { email, password } = data;
         const login = await checkLogin(data);
         if (login === 1) {
-
-            console.log(login)
             const userInfo = await getUserByEmail(email);
 
             console.log(userInfo)

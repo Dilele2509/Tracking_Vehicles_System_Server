@@ -1,15 +1,17 @@
 'use strict';
 
-const { getVehicles, 
-    getVehicleById, 
-    getVehicleByUserID, 
-    getVehiclesByBrandName, 
-    getVehiclesByLicensePlate, 
+const { getVehicles,
+    getVehicleById,
+    getVehicleByUserID,
+    getVehiclesByBrandName,
+    getVehiclesByLicensePlate,
     updateVehicleStatus,
-    addNewVehicle,    
+    addNewVehicle,
     generateVehicleId,
     updateVehicleInfo,
     deleteVehicle } = require('../data/vehicle');
+
+const { getOwnerInfo } = require('../data/owner')
 
 const getAllVehicle = async (req, res) => {
     try {
@@ -35,8 +37,9 @@ const getById = async (req, res) => {
 //get vehicle base on driver_id
 const getByUserID = async (req, res) => {
     try {
-        const userID = req.body.userID;
-        const vehicles = await getVehicleByUserID(userID);
+        const userID = req.cookies.userId;
+        const ownerInfo = await getOwnerInfo(userID);
+        const vehicles = await getVehicleByUserID(ownerInfo.id);
         res.send(vehicles);
     } catch (error) {
         res.status(400).send({ error: error.message });
@@ -45,9 +48,9 @@ const getByUserID = async (req, res) => {
 
 const getByBrandName = async (req, res) => {
     try {
-        const brandName = req.body.brandName; 
-        const vehicles = await getVehiclesByBrandName(brandName); 
-        res.send(vehicles); 
+        const brandName = req.body.brandName;
+        const vehicles = await getVehiclesByBrandName(brandName);
+        res.send(vehicles);
     } catch (error) {
         res.status(400).send({ error: error.message });
     }
@@ -55,9 +58,9 @@ const getByBrandName = async (req, res) => {
 
 const getByLicensePlate = async (req, res) => {
     try {
-        const licensePlate = req.body.licensePlate; 
-        const vehicles = await getVehiclesByLicensePlate(licensePlate); 
-        res.send(vehicles); 
+        const licensePlate = req.body.licensePlate;
+        const vehicles = await getVehiclesByLicensePlate(licensePlate);
+        res.send(vehicles);
     } catch (error) {
         res.status(400).send({ error: error.message });
     }
@@ -65,7 +68,7 @@ const getByLicensePlate = async (req, res) => {
 
 const disableVehicle = async (req, res) => {
     try {
-        const id = req.body.id; 
+        const id = req.body.id;
         const result = await updateVehicleStatus(id);
         if (result.affectedRows === 0) {
             return res.status(404).send({ error: 'Vehicle not found or already deleted.' });
@@ -78,8 +81,8 @@ const disableVehicle = async (req, res) => {
 
 const enableVehicle = async (req, res) => {
     try {
-        const id = req.body.id; 
-        const result = await updateVehicleStatus(id, false); 
+        const id = req.body.id;
+        const result = await updateVehicleStatus(id, false);
         if (result.affectedRows === 0) {
             return res.status(404).send({ error: 'Vehicle not found or not deleted.' });
         }
@@ -108,14 +111,14 @@ const addVehicle = async (req, res) => {
 
 const updateVehicle = async (req, res) => {
     try {
-        const data = req.body; 
-        const result = await updateVehicleInfo(data); 
+        const data = req.body;
+        const result = await updateVehicleInfo(data);
 
         if (result.affectedRows === 0) {
-            return res.status(404).send({ status: 'fail' }); 
+            return res.status(404).send({ status: 'fail' });
         }
 
-        res.send({ status: 'success', update: result }); 
+        res.send({ status: 'success', update: result });
     } catch (error) {
         res.status(400).send({ status: 'fail', error: error.message });
     }
@@ -134,11 +137,11 @@ const deleteVehicleController = async (req, res) => {
     }
 };
 
-module.exports = { 
-    getAllVehicle, 
-    getById, 
-    getByUserID, 
-    getByBrandName, 
+module.exports = {
+    getAllVehicle,
+    getById,
+    getByUserID,
+    getByBrandName,
     getByLicensePlate,
     disableVehicle,
     enableVehicle,

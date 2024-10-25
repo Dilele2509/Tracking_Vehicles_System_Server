@@ -17,7 +17,7 @@ const app = express();
 app.use(express.json());
 
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: 'http://172.16.30.105:3000',
   credentials: true,
 }));
 
@@ -32,5 +32,5 @@ app.use('/api/login', loginRoutes);
 
 // Start the server
 app.listen(config.port, () => {
-  console.log(`App listening on url http://localhost:${config.port}`);
+  console.log(`App listening on url http://172.16.30.105:${config.port}`);
 });
