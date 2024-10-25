@@ -9,6 +9,7 @@ const { getInfoById,
         deleteUserController,
         disableUser,
         enableUser } = require('../controllers/userController'); 
+const { getDriverByOwner } = require('../controllers/ownerController');
 
 const router = express.Router();
 
@@ -21,5 +22,8 @@ router.post('/add-user', addNewUser);
 router.delete('/delete', deleteUserController)
 router.put('/disable', disableUser); 
 router.put('/enable', enableUser);
+
+//for owners
+router.get('/get-driver', getDriverByOwner); 
 
 module.exports = { routes: router };
