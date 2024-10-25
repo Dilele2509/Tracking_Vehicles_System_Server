@@ -13,7 +13,7 @@ const { getInfoById,
 const router = express.Router();
 
 
-router.post('/get-info', getInfoById); 
+router.get('/get-info', getInfoById); 
 router.put('/update-info', updateUserInfo); 
 router.post('/check-password', checkPassword); 
 router.put('/update-password', updatePassword);
