@@ -12,7 +12,7 @@ const getDriverByOwner = async (req, res)=>{
         if (!driver) {
             return res.status(404).json({ message: 'No driver found for this owner' });
         }
-        res.status(200).json(driver);
+        res.send(driver);
     } catch (error) {
         console.error('Error fetching driver info:', error);
         return res.status(500).json({ message: 'Server error', error: error.message });

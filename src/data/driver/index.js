@@ -14,7 +14,7 @@ const getDriverByOwnerId = async (userId) => {
 
     try {
         const [result] = await pool.execute(query, [ownerInfo.id]);
-        return result[0]
+        return result
     } catch (error) {
         console.error('Database query error:', error);
         throw new Error('Database query failed');
