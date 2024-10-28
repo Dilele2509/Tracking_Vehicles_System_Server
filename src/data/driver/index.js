@@ -22,6 +22,15 @@ const getDriverByOwnerId = async (userId) => {
 
 }
 
+const generateDriverID = async () => {
+    const sqlQueries = await loadSqlQueries('driver/sql');
+    const [result] = await pool.query(sqlQueries.getLastDriverID);
+    const maxId = result[0]?.id || 'DRIVER00'; 
+    const nextIdNumber = parseInt(maxId.replace('DRIVER', '')) + 1;
+    return `DRIVER${nextIdNumber.toString().padStart(3, '0')}`; 
+};
+
 module.exports = {
-    getDriverByOwnerId
+    getDriverByOwnerId,
+    generateDriverID
 }

@@ -32,6 +32,7 @@ const getVehicleByUserID = async (ownerId) => {
     try {
         const sqlQueries = await loadSqlQueries('vehicle/sql');
         const [vehicle] = await pool.query(sqlQueries.vehicleUserID, [ownerId]);
+        console.log(vehicle);
         return vehicle;
     } catch (error) {
         console.error('Error fetching vehicle by ID:', error.message);

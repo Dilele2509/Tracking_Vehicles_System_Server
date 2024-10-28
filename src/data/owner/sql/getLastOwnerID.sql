@@ -1,0 +1,1 @@
+SELECT id FROM owners ORDER BY id DESC LIMIT 1;

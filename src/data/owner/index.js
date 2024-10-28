@@ -20,6 +20,15 @@ const getOwnerInfo = async (userId) => {
     }
 }
 
+const generateOwnerID = async () => {
+    const sqlQueries = await loadSqlQueries('owner/sql');
+    const [result] = await pool.query(sqlQueries.getLastOwnerID);
+    const maxId = result[0]?.id || 'OWNER00'; 
+    const nextIdNumber = parseInt(maxId.replace('OWNER', '')) + 1;
+    return `OWNER${nextIdNumber.toString().padStart(3, '0')}`; 
+};
+
 module.exports = {
-    getOwnerInfo
+    getOwnerInfo,
+    generateOwnerID
 }

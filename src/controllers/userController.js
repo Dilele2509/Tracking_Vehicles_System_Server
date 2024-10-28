@@ -1,5 +1,7 @@
 'use strict';
 
+const { generateDriverID } = require('../data/driver');
+const { generateOwnerID } = require('../data/owner');
 // const bcrypt = require('bcrypt');
 const { findById, updateUser, checkUserPassword, updatePasswordByID, createUser, generateUserID, deleteUser, updateUserStatus} = require('../data/user'); 
 
@@ -22,6 +24,8 @@ const getInfoById = async (req, res) => {
             birthday: user.birthday,
             phone_number: user.phone_number,
             email: user.email,
+            avatar: user.avatar,
+            deleted: user.deleted
         });
     } catch (error) {
         console.error('Error fetching user info:', error); 
@@ -94,14 +98,20 @@ const updatePassword = async (req, res) => {
 const addNewUser = async (req, res) => {
     try {
         const data = req.body;
+        let subId = null;
 
         if (!data.role_id || !data.fullname || !data.email || !data.password) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
-
         const newId = await generateUserID();
+        if (data.role_id === 'ROLE002'){
+            subId = await generateOwnerID();
+        } else if (data.role_id === 'ROLE003'){
+            subId = await generateDriverID();
+        }
+
         // Create the user
-        const result = await createUser(newId, data);
+        const result = await createUser(newId, subId, data);
 
         return res.status(201).json({ status: 'User created', added: result});
     } catch (error) {

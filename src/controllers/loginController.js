@@ -64,8 +64,8 @@ const checkLoginStatus = async (req, res) => {
 
 
 const logout = (req, res) => {
-    res.clearCookie('userId');
-    res.send({
+    res.clearCookie('userId'); 
+    res.status(200).send({
         status: true,
         message: 'Logged out successfully',
     });

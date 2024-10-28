@@ -40,6 +40,7 @@ const getByUserID = async (req, res) => {
         const userID = req.cookies.userId;
         const ownerInfo = await getOwnerInfo(userID);
         const vehicles = await getVehicleByUserID(ownerInfo.id);
+        console.log(vehicles);
         res.send(vehicles);
     } catch (error) {
         res.status(400).send({ error: error.message });

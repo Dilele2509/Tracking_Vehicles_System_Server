@@ -83,28 +83,47 @@ const updatePasswordByID = async (userId, newPassword) => {
 };
 
 
-const createUser = async (newId,data) => {
+const createUser = async (newId, subId, data) => {
     const queries = await loadSqlQueries('user/sql');
-    const query = queries.addUser; 
+    const query = queries.addUser;
 
     try {
+        // Insert into the users table
         const [result] = await pool.execute(query, [
             newId,
             data.role_id,
             data.fullname,
-            data.birthday,
+            null, // birthday is set to null by default
             data.phone_number,
             data.email,
             data.password,
-            data.avatar || '/avatars/default_ava.png', 
+            data.avatar || '/public/assets/Images/avatars/default_ava.png', 
             data.deleted || 0 // Default deleted status
         ]);
-        return result;
+
+        // Insert into role-specific tables first (owners or drivers)
+        if (data.role_id === 'ROLE002') {
+            // Role 002 corresponds to 'Lessor' or 'Owner'
+            const ownerQueries = await loadSqlQueries('owner/sql');
+            await pool.execute(ownerQueries.addOwner, [subId, newId]);
+        } else if (data.role_id === 'ROLE003') {
+            // Role 003 corresponds to 'Renter' or 'Driver'
+            const driverQueries = await loadSqlQueries('driver/sql');
+            await pool.execute(driverQueries.addDriver, [subId, newId]);
+        }
+
+        // Return a success response with user creation result
+        return {
+            status: true,
+            message: 'User created successfully',
+            data: result
+        };
     } catch (error) {
         console.error('Database create user error:', error);
         throw new Error('Database create user failed');
     }
 };
+
 
 const generateUserID = async () => {
     const sqlQueries = await loadSqlQueries('user/sql');
