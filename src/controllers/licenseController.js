@@ -1,9 +1,11 @@
 'use strict';
 
-const { addLicense, 
-        generateLicenseId,
-        updateLicense,
-        deleteLicense } = require('../data/license');
+const { addLicense,
+    generateLicenseId,
+    updateLicense,
+    deleteLicense,
+    getLicenseInfo, 
+    addLicensePhoto} = require('../data/license');
 
 const addLicenseController = async (req, res) => {
 
@@ -11,10 +13,57 @@ const addLicenseController = async (req, res) => {
         const data = req.body;
         const newId = await generateLicenseId();
 
-        const result = await addLicense(newId, data);
-        res.send({ status: 'success', added: result });
+        const photo = req.file;
+        if (!photo) {
+            return res.status(400).json({ message: 'No file uploaded' });
+        }
+        // Insert the vehicle data
+        const result = await addLicense(newId, photo, data);
+        if (result.status === 'success') {
+            const filePath = '/public/assets/Images/IDCardPhoto/' + photo.filename;
+            const addPhoto = await addLicensePhoto(newId, filePath);
+
+            // Send the response
+            const combineRes = {
+                status: 200,
+                message: "Added successfully",
+                image: addPhoto,
+                insert: result.result // Return the insert result if needed
+            };
+            return res.send(combineRes);
+        } else {
+            return res.status(400).json({ status: 'fail' });
+        }
     } catch (error) {
         return res.status(400).json({ status: 'fail' });
+    }
+};
+
+const updateLicensePhoto = async (req, res) => {
+    const {licenseId} = req.body;
+    const photo = req.file;
+
+    if (!photo) {
+        return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    try {
+        const filePath = '/public/assets/Images/IDCardPhoto/' + photo.filename;
+        const result = await addLicensePhoto(licenseId, filePath);
+        res.send({ status: 'success', updated: result });
+    } catch (error) {
+        return res.status(400).json({ status: 'fail', message: error.message });
+    }
+};
+
+const getLicenseByUser = async (req, res) => {
+    const userId = req.cookies.userId;
+
+    try {
+        const result = await getLicenseInfo(userId);
+        res.send({ status: 'success', license: result });
+    } catch (error) {
+        return res.status(400).json({ status: 'fail', message: error.message });
     }
 };
 
@@ -50,8 +99,10 @@ const deleteLicenseController = async (req, res) => {
     }
 };
 
-module.exports = { 
+module.exports = {
     addLicenseController,
+    updateLicensePhoto,
+    getLicenseByUser,
     updateLicenseController,
     deleteLicenseController,
 };

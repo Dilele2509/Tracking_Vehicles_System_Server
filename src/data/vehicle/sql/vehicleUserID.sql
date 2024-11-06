@@ -1,1 +1,1 @@
-SELECT * FROM vehicles WHERE owner_id = ?
+SELECT * FROM vehicles WHERE user_id = ?

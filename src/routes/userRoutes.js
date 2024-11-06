@@ -8,8 +8,8 @@ const { getInfoById,
         addNewUser,
         deleteUserController,
         disableUser,
-        enableUser } = require('../controllers/userController'); 
-const { getDriverByOwner } = require('../controllers/ownerController');
+        enableUser, 
+        addLicenseId} = require('../controllers/userController'); 
 
 const router = express.Router();
 
@@ -19,11 +19,9 @@ router.put('/update-info', updateUserInfo);
 router.post('/check-password', checkPassword); 
 router.put('/update-password', updatePassword);
 router.post('/add-user', addNewUser);
+router.put('/update-license', addLicenseId);
 router.delete('/delete', deleteUserController)
 router.put('/disable', disableUser); 
 router.put('/enable', enableUser);
-
-//for owners
-router.get('/get-driver', getDriverByOwner); 
 
 module.exports = { routes: router };

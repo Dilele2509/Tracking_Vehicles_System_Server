@@ -1,19 +1,26 @@
 'use strict';
-
-const { generateDriverID } = require('../data/driver');
-const { generateOwnerID } = require('../data/owner');
 // const bcrypt = require('bcrypt');
-const { findById, updateUser, checkUserPassword, updatePasswordByID, createUser, generateUserID, deleteUser, updateUserStatus} = require('../data/user'); 
+const {
+    findById,
+    updateUser,
+    updateUserAva,
+    checkUserPassword,
+    updatePasswordByID,
+    createUser,
+    addLicenseIdToUser,
+    generateUserID,
+    deleteUser,
+    updateUserStatus } = require('../data/user');
 
 
 const getInfoById = async (req, res) => {
     try {
 
-        const userId = req.cookies.userId; 
+        const userId = req.cookies.userId;
         if (!userId) {
             return res.status(400).json({ message: 'User ID not found in cookies' });
         }
-        const user = await findById(userId); 
+        const user = await findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -24,53 +31,85 @@ const getInfoById = async (req, res) => {
             birthday: user.birthday,
             phone_number: user.phone_number,
             email: user.email,
+            license_id: user.license_id,
             avatar: user.avatar,
             deleted: user.deleted
         });
     } catch (error) {
-        console.error('Error fetching user info:', error); 
+        console.error('Error fetching user info:', error);
         return res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
 
-const updateUserInfo = async (req, res) => {
+const 
+updateUserInfo = async (req, res) => {
     try {
-        const userId = req.cookies.userId; 
+        const userId = req.cookies.userId;
         if (!userId) {
             return res.status(400).json({ message: 'User ID not found in cookies' });
         }
 
-        const updatedData = req.body; 
-        const updatedUser = await updateUser(userId, updatedData); 
+        const updatedData = req.body;
+        const updatedUser = await updateUser(userId, updatedData);
 
         return res.status(200).json(updatedUser);
     } catch (error) {
-        console.error('Error updating user info:', error); 
+        console.error('Error updating user info:', error);
         return res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
+const uploadAvatar = async (req, res, next) => {
+    try {
+        const userId = req.cookies.userId;
+
+        // Log the userId to verify it is correctly received
+        /* console.log("Received userId:", userId); */
+
+        if (!userId) {
+            return res.status(400).json({ message: 'User ID is required' });
+        }
+
+        if (!req.file) {
+            /* console.log("No file uploaded"); */
+            return res.status(400).json({ message: 'No file uploaded' });
+        }
+
+        /* console.log('File uploaded: ', req.file); */
+
+        const filePath = '/public/assets/Images/avatars/' + req.file.filename;
+        /* console.log("File path:", filePath); */
+
+        const result = await updateUserAva(userId, filePath);
+        /* console.log("Database update result:", result); */
+
+        res.status(200).json({ message: 'Avatar uploaded successfully', user: result });
+    } catch (error) {
+        console.error("Error in uploadAvatar:", error);
+        res.status(500).json({ message: 'An error occurred' });
+    }
+};
 
 
 const checkPassword = async (req, res) => {
     try {
-        const userId = req.cookies.userId; 
-        const { password } = req.body; 
+        const userId = req.cookies.userId;
+        const { password } = req.body;
 
         if (!userId) {
             return res.status(400).json({ message: 'User ID not found in cookies' });
         }
-        const storedPassword = await checkUserPassword(userId); 
+        const storedPassword = await checkUserPassword(userId);
 
         // const hashedStoredPassword = await bcrypt.hash(storedHashedPassword, 10)
 
-        const isPasswordValid = (password === storedPassword); 
+        const isPasswordValid = (password === storedPassword);
         //    const isPasswordValid = await bcrypt.compare(password, hashedStoredPassword); 
 
         return res.status(200).json({ status: isPasswordValid });
     } catch (error) {
-        console.error('Error checking password:', error); 
+        console.error('Error checking password:', error);
         return res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
@@ -78,18 +117,18 @@ const checkPassword = async (req, res) => {
 
 const updatePassword = async (req, res) => {
     try {
-        const userId = req.cookies.userId; 
-        const { newPassword } = req.body; 
+        const userId = req.cookies.userId;
+        const { newPassword } = req.body;
         if (!userId) {
             return res.status(400).json({ message: 'User ID not found in cookies' });
         }
 
         // const hashedPassword = await bcrypt.hash(newPassword, 10);
-        const result = await updatePasswordByID(userId, newPassword ); 
+        const result = await updatePasswordByID(userId, newPassword);
 
-        return res.status(200).json({ status: result.affectedRows > 0 }); 
+        return res.status(200).json({ status: result.affectedRows > 0 });
     } catch (error) {
-        console.error('Error updating password:', error); 
+        console.error('Error updating password:', error);
         return res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
@@ -98,24 +137,34 @@ const updatePassword = async (req, res) => {
 const addNewUser = async (req, res) => {
     try {
         const data = req.body;
-        let subId = null;
 
         if (!data.role_id || !data.fullname || !data.email || !data.password) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
         const newId = await generateUserID();
-        if (data.role_id === 'ROLE002'){
-            subId = await generateOwnerID();
-        } else if (data.role_id === 'ROLE003'){
-            subId = await generateDriverID();
-        }
 
         // Create the user
-        const result = await createUser(newId, subId, data);
+        const result = await createUser(newId, data);
 
-        return res.status(201).json({ status: 'User created', added: result});
+        return res.status(201).json({ status: 'User created', added: result });
     } catch (error) {
         console.error('Error creating user:', error);
+        return res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+const addLicenseId = async (req, res) => {
+    try {
+        const userId = req.cookies.userId;
+        const { licenseId } = req.body;
+        if (!userId || !licenseId) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+        const result = await addLicenseIdToUser(userId, licenseId);
+
+        return res.status(200).json({ status: result.affectedRows > 0 });
+    } catch (error) {
+        console.error('Error adding license:', error);
         return res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
@@ -134,7 +183,7 @@ const deleteUserController = async (req, res) => {
 
 const disableUser = async (req, res) => {
     try {
-        const id = req.body.id; 
+        const id = req.body.id;
         const result = await updateUserStatus(id);
         if (result.affectedRows === 0) {
             return res.status(404).send({ error: 'User not found or already deleted.' });
@@ -147,8 +196,8 @@ const disableUser = async (req, res) => {
 
 const enableUser = async (req, res) => {
     try {
-        const id = req.body.id; 
-        const result = await updateUserStatus(id, false); 
+        const id = req.body.id;
+        const result = await updateUserStatus(id, false);
         if (result.affectedRows === 0) {
             return res.status(404).send({ error: 'User not found or not deleted.' });
         }
@@ -159,5 +208,15 @@ const enableUser = async (req, res) => {
 }
 
 
-module.exports = { getInfoById, updateUserInfo, checkPassword, updatePassword, addNewUser, deleteUserController, disableUser, enableUser };
+module.exports = { 
+    getInfoById, 
+    uploadAvatar, 
+    updateUserInfo, 
+    checkPassword, 
+    updatePassword, 
+    addNewUser, 
+    addLicenseId, 
+    deleteUserController, 
+    disableUser, 
+    enableUser };
 

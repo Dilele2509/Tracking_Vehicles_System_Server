@@ -4,14 +4,14 @@ const { getVehicles,
     getVehicleById,
     getVehicleByUserID,
     getVehiclesByBrandName,
+    searchVehicleData,
     getVehiclesByLicensePlate,
     updateVehicleStatus,
     addNewVehicle,
     generateVehicleId,
     updateVehicleInfo,
-    deleteVehicle } = require('../data/vehicle');
-
-const { getOwnerInfo } = require('../data/owner')
+    deleteVehicle,
+    updateVehicleImg } = require('../data/vehicle');
 
 const getAllVehicle = async (req, res) => {
     try {
@@ -19,6 +19,17 @@ const getAllVehicle = async (req, res) => {
         res.send(vehicleList);
     } catch (error) {
         res.status(400).send({ error: error.message });
+    }
+}
+
+const searchVehicle = async (req, res, next) => {
+    try {
+        const title = req.body.title;
+        const search = await searchVehicleData(title);
+        /* console.log('search: ', search); */
+        res.send(search);
+    } catch (error) {
+        res.status(400).send(error.message);
     }
 }
 
@@ -38,9 +49,8 @@ const getById = async (req, res) => {
 const getByUserID = async (req, res) => {
     try {
         const userID = req.cookies.userId;
-        const ownerInfo = await getOwnerInfo(userID);
-        const vehicles = await getVehicleByUserID(ownerInfo.id);
-        console.log(vehicles);
+        const vehicles = await getVehicleByUserID(userID);
+        /* console.log(vehicles); */
         res.send(vehicles);
     } catch (error) {
         res.status(400).send({ error: error.message });
@@ -94,20 +104,47 @@ const enableVehicle = async (req, res) => {
 }
 
 const addVehicle = async (req, res) => {
-    try {
-        const data = req.body;
-        const owner_id = "OWNER001"; // hông biết xử lý chỗ này bé ơiii =)))
-        const thumbnail = '/public/assets/Images/default.jpg'; // Default thumbnail path
-
-        // Generate the new vehicle ID
+     try {
+        const userId = req.cookies.userId;
+        if (!userId) {
+            return res.status(400).json({ message: 'User ID is required' });
+        }
         const newId = await generateVehicleId();
 
-        const result = await addNewVehicle(newId, data);
-        res.send({ status: 'success', added: result });
+
+        // Destructure the data from the request body
+        const {device_id, vehicle_brand, vehicle_line, license_plate} = req.body;
+        const thumbnail = req.file;
+
+        // Check if the thumbnail file is uploaded
+        if (!thumbnail) {
+            return res.status(400).json({ message: 'No file uploaded' });
+        }
+
+        // Insert the vehicle data
+        const insert = await addNewVehicle(newId, userId, device_id, vehicle_brand, vehicle_line, license_plate);
+        if (insert.status === 'success') {
+            const filePath = '/public/assets/Images/vehicles/' + thumbnail.filename;
+            /* console.log('filePath: ' + filePath); */
+            const result = await updateVehicleImg(newId, filePath); // Use newId instead of id
+
+            // Send the response
+            const combineRes = {
+                status: 200,
+                message: "Added successfully",
+                image: result,
+                insert: insert.result // Return the insert result if needed
+            };
+            return res.send(combineRes);
+        } else {
+            return res.status(400).send(insert);
+        }
     } catch (error) {
-        res.status(400).send({ status: 'fail', error: error.message });
-    }
+        console.error('Error in addVehicle:', error.message); // Log the error
+        return res.status(500).json({ message: error.message });
+    } 
 };
+
 
 
 const updateVehicle = async (req, res) => {
@@ -141,6 +178,7 @@ const deleteVehicleController = async (req, res) => {
 module.exports = {
     getAllVehicle,
     getById,
+    searchVehicle,
     getByUserID,
     getByBrandName,
     getByLicensePlate,

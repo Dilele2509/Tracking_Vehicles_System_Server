@@ -1,7 +1,6 @@
    UPDATE vehicles SET 
        device_id = ?, 
-       owner_id = ?, 
-       driver_id = ?, 
+       user_id = ?, 
        vehicle_brand = ?, 
        vehicle_line = ?, 
        thumbnail = ?, 

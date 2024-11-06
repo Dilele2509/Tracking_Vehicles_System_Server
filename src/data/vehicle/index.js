@@ -28,11 +28,22 @@ const getVehicleById = async (id) => {
     }
 };
 
-const getVehicleByUserID = async (ownerId) => {
+const searchVehicleData = async (title) => {
     try {
         const sqlQueries = await loadSqlQueries('vehicle/sql');
-        const [vehicle] = await pool.query(sqlQueries.vehicleUserID, [ownerId]);
-        console.log(vehicle);
+        const searchTerm = `%${title}%`;
+        const [result] = await pool.query(sqlQueries.searchVehicle, [searchTerm, searchTerm]);
+        return result;
+    } catch (error) {
+        return error.message;
+    }
+}
+
+const getVehicleByUserID = async (driverId) => {
+    try {
+        const sqlQueries = await loadSqlQueries('vehicle/sql');
+        const [vehicle] = await pool.query(sqlQueries.vehicleUserID, [driverId]);
+        /* console.log(vehicle); */
         return vehicle;
     } catch (error) {
         console.error('Error fetching vehicle by ID:', error.message);
@@ -80,30 +91,41 @@ const updateVehicleStatus = async (id, isDisable = true) => {
 }
 
 
-const addNewVehicle = async (newId,data) => {
+const addNewVehicle = async (newId, userId, device_id, vehicle_brand, vehicle_line, license_plate) => {
     try {
+        /* console.log('newid: ' + newId, 'userId: ' + userId, device_id, vehicle_brand, vehicle_line, license_plate); */
         const sqlQueries = await loadSqlQueries('vehicle/sql');
         const result = await pool.query(sqlQueries.addVehicle, [ 
-            newId,
-            data.device_id,
-            data.owner_id,
-            data.driver_id,
-            data.vehicle_brand,
-            data.vehicle_line,
-            data.thumbnail,
-            data.license_plate,
-            data.location,
-            data.status,
-            data.parked_time,
-            data.km_per_day,
-            data.deleted
+            newId,          // id
+            device_id,     // device_id
+            userId,       // user_id
+            vehicle_brand, // vehicle_brand
+            vehicle_line,  // vehicle_line
+            license_plate, // license_plate
         ]);
-        return result; 
+        return {
+            status: 'success', // Make sure status is a string
+            result: result
+        }; 
     } catch (error) {
         console.error('Error adding new vehicle:', error.message);
         throw new Error('Could not add vehicle');
     }
 };
+
+
+const updateVehicleImg = async (id, thumbnail) => {
+    try {
+        const sqlQueries = await loadSqlQueries('vehicle/sql');
+        console.log('thumbnail:', thumbnail, 'userId:', id); 
+        const update = await pool.execute(sqlQueries.updateVehicleImg, [thumbnail, id]);
+        console.log("SQL Update Result:", update);
+        return update;
+    } catch (error) {
+        console.error("Error in update thumbnail vehicle:", error.message);
+        throw error;
+    }
+}
 
 // Function to generate the next vehicle ID
 const generateVehicleId = async () => {
@@ -120,8 +142,7 @@ const updateVehicleInfo = async (data) => {
         const locationWKT = `POINT(${data.location.longitude} ${data.location.latitude})`;
         const result = await pool.query(sqlQueries.updateVehicle, [ 
             data.device_id,
-            data.owner_id,
-            data.driver_id,
+            data.user_id,
             data.vehicle_brand,
             data.vehicle_line,
             data.thumbnail,
@@ -155,6 +176,8 @@ const deleteVehicle = async (id) => {
 module.exports = { 
     getVehicles, 
     getVehicleById, 
+    searchVehicleData,
+    updateVehicleImg,
     getVehicleByUserID, 
     getVehiclesByBrandName, 
     getVehiclesByLicensePlate,

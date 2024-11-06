@@ -1,1 +1,0 @@
-SELECT * FROM owners WHERE user_id = ?;
