@@ -49,8 +49,9 @@ const getById = async (req, res) => {
 const getByUserID = async (req, res) => {
     try {
         const userID = req.cookies.userId;
+        /* console.log(userID); */
         const vehicles = await getVehicleByUserID(userID);
-        /* console.log(vehicles); */
+        console.log(vehicles);
         res.send(vehicles);
     } catch (error) {
         res.status(400).send({ error: error.message });

@@ -1,0 +1,1 @@
+SELECT device_id FROM devices ORDER BY device_id DESC LIMIT 1
