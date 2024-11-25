@@ -30,7 +30,7 @@ app.use(express.json());
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: 'http://192.168.1.56:3000',
   credentials: true,
 }));
 
