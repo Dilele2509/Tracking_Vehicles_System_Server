@@ -42,7 +42,7 @@ const addNewData = async (data) => {
         const sqlQueries = await loadSqlQueries('device/sql');
         const result = await pool.query(sqlQueries.addDataDevice, [ 
             data.device_id,
-            data. latitude,
+            data.latitude,
             data.longitude,
             data.date,
             data.time,

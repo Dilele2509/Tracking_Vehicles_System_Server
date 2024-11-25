@@ -61,7 +61,7 @@ const getLicenseByUser = async (req, res) => {
 
     try {
         const result = await getLicenseInfo(userId);
-        res.send({ status: 'success', license: result });
+        res.send({ status: 'success', license: result[0] });
     } catch (error) {
         return res.status(400).json({ status: 'fail', message: error.message });
     }

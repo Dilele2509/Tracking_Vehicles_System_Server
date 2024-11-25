@@ -1,5 +1,5 @@
 'use strict';
-
+const dotenv = require('dotenv');
 const express = require('express');
 const config = require('./config.js');
 const cors = require('cors');
@@ -8,12 +8,20 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const multer = require('multer');
 
+dotenv.config();
+
+const { HOST } = process.env;
+
 // Import routes with different variable names
 const { routes: vehicleRoutes } = require('./src/routes/vehicleRoutes.js');
 const { routes: licenseRoutes } = require('./src/routes/licenseRoutes.js');
 const { routes: userRoutes } = require('./src/routes/userRoutes.js');
 const { routes: loginRoutes } = require('./src/routes/loginRoutes.js');
 const { routes: deviceRoutes } = require('./src/routes/deviceRoutes.js');
+const { routes: walletRoutes } = require('./src/routes/walletRoutes.js');
+const { routes: incomeRoutes } = require('./src/routes/incomeRoutes.js');
+const { routes: violateRoutes} = require('./src/routes/violateRoutes.js');
+const { routes: tripRoutes } = require('./src/routes/tripRoutes.js');
 
 const app = express();
 
@@ -22,7 +30,7 @@ app.use(express.json());
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.use(cors({
-  origin: 'http://192.168.1.56:3000',
+  origin: 'http://localhost:3000',
   credentials: true,
 }));
 
@@ -76,8 +84,12 @@ app.use('/api/licenses', licenseRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/login', loginRoutes);
 app.use('/api/device', deviceRoutes);
+app.use('/api/wallet', walletRoutes);
+app.use('/api/income', incomeRoutes);
+app.use('/api/violate', violateRoutes);
+app.use('/api/trip', tripRoutes);
 
 // Start the server
 app.listen(config.port, () => {
-  console.log(`App listening on url http://192.168.1.56:${config.port}`);
+  console.log(`App listening on url http://${HOST}:${config.port}`);
 });
