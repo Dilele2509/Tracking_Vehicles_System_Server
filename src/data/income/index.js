@@ -77,9 +77,29 @@ const getIncomeID = async (userId) => {
     }
 };
 
+const addIncome = async (data) => {
+    try {
+        /* console.log(data); */
+        const sqlQueries = await loadSqlQueries('income/sql');
+        const result = await pool.query(sqlQueries.addIncome, [
+            data.driver_id,
+            data.date,
+            data.timeCompleted,
+            data.id,
+            0.3,
+            (data.price*0.3)
+        ]);
+        return result;
+    } catch (error) {
+        console.error('Error fetching driver income:', error.message);
+        throw new Error('Could not fetch driver income');
+    }
+};
+
 module.exports = { 
     statisticDate, 
     statisticMonth,
     statisticYear,
-    getIncomeID
+    getIncomeID,
+    addIncome
 };

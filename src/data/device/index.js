@@ -3,8 +3,10 @@
 const mysql = require('mysql2/promise');
 const config = require('../../../config.js');
 const { loadSqlQueries } = require('../utils.js');
+const { broadcast } = require('../../services/websocketService.js')
 
 const pool = mysql.createPool(config.sql);
+
 
 const getDeviceById = async (deviceId) => {
     try {
@@ -42,21 +44,39 @@ const addNewData = async (data) => {
         const sqlQueries = await loadSqlQueries('device/sql');
         console.log('data: ', data);
         console.log('sqlQueries: ', sqlQueries.addDataDevice);
+
         // Get the current date and time
         const now = new Date();
 
         // Convert to string formats
         const date = now.toISOString().split('T')[0]; // Format as YYYY-MM-DD
         const time = now.toTimeString().split(' ')[0]; // Format as HH:mm:ss
+
+        // Prepare data for insertion
+        const addJson = {
+            device_id: data.device_id,
+            latitude: data.latitude,
+            longitude: data.longitude,
+            date: date,
+            time: time,
+            RSSI: data.RSSI,
+            speed: data.speed,
+        }
+
+        // Ensure that the query has placeholders for all the values
         const result = await pool.query(sqlQueries.addDataDevice, [
-            data.device_id,
-            data.latitude,
-            data.longitude,
-            date,
-            time,
-            data.RSSI,
-            data.speed,
+            addJson.device_id,
+            addJson.latitude,
+            addJson.longitude,
+            addJson.date,
+            addJson.time,
+            addJson.RSSI,
+            addJson.speed
         ]);
+
+        // Broadcast the data to clients via WebSocket
+        broadcast({ event: 'newData', data: addJson });
+
         return {
             status: 'success', // Make sure status is a string
             result: result

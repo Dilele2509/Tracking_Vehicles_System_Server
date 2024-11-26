@@ -1,6 +1,6 @@
 'use strict';
 
-const { driverCompleted, driverCancelled, driverRated, completedTrip, completedTripList, ongoingTripList } = require("../data/trip");
+const { driverCompleted, driverCancelled, driverRated, completedTrip, completedTripList, ongoingTripList, setComplete, getTripInfo } = require("../data/trip");
 
 const getDriverCompleted = async (req, res) => {
     try {
@@ -34,7 +34,7 @@ const getDriverRated = async (req, res) => {
 
 const getCompletedTrip = async (req, res) => {
     try {
-        const {tripId} = req.body;
+        const { tripId } = req.body;
         const result = await completedTrip(tripId);
         res.send(result);
     } catch (error) {
@@ -42,7 +42,7 @@ const getCompletedTrip = async (req, res) => {
     }
 };
 
-const getCompletedTripList = async (req, res) => {
+const getCompletedTripList = async (req,res) => {
     try {
         const result = await completedTripList();
         res.send(result);
@@ -53,12 +53,13 @@ const getCompletedTripList = async (req, res) => {
 
 const getOngoingTripList = async (req, res) => {
     try {
-        const result = await ongoingTripList();
-        res.send(result);
+        const result = await ongoingTripList();  
+        res.send(result); 
     } catch (error) {
         res.status(400).send({ error: error.message });
     }
 };
+
 
 const calculateTripPrice = (distance) => {
     const baseFare = 29000; // Giá cho 2 km đầu tiên
@@ -80,11 +81,23 @@ const calculateTripPrice = (distance) => {
     return totalFare;
 }
 
+const setCompleteTrip = async (req, res) => {
+    try {
+        const { tripId } = req.body;
+        const tripInfo = await getTripInfo(tripId)
+        const result = await setComplete(tripInfo);
+        res.send(result);
+    } catch (error) {
+        res.status(400).send({ error: error.message });
+    }
+}
+
 module.exports = {
     getDriverCompleted,
     getDriverCancelled,
     getDriverRated,
     getCompletedTrip,
     getCompletedTripList,
-    getOngoingTripList
+    getOngoingTripList,
+    setCompleteTrip
 };
