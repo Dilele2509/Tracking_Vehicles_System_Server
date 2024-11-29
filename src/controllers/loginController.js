@@ -15,7 +15,12 @@ const loginController = async (req, res) => {
             console.log(userInfo)
             //console.log(userInfo[0].id);
             // Set the user ID in a cookie
-            res.cookie('userId', userInfo.id, { httpOnly: true });
+            res.cookie('userId', userInfo.id, {
+                httpOnly: true, // Ensures the cookie is only accessible by the server
+                secure: process.env.NODE_ENV === 'production', // Only set Secure flag in production
+                sameSite: 'None', // Needed for cross-origin cookies
+              });
+              
             return res.send(userInfo);
         } else {
             const checkEmail = await checkEmailExist(email);
@@ -45,10 +50,9 @@ const loginController = async (req, res) => {
 }
 
 const checkLoginStatus = async (req, res) => {
-    const userIdFromCookie = req.cookies.userId;
-    const userIdFromBody = req.body.userId;
-
-    if (userIdFromCookie && userIdFromCookie === userIdFromBody) {
+    const userId = req.cookies.userId;
+    /* console.log(req.cookies); */
+    if (userId) {
         res.send({
             status: true,
             message: 'logged'

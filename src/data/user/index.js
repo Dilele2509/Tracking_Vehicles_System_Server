@@ -5,6 +5,34 @@ const config = require('../../../config.js');
 const { loadSqlQueries } = require('../utils.js');
 const pool = mysql.createPool(config.sql);
 
+
+const allDriver = async () => {
+    const queries = await loadSqlQueries('user/sql');
+    const query = queries.allDriver;
+
+    try {
+        const [result] = await pool.execute(query);
+        return result
+    } catch (error) {
+        console.error('Database query error:', error);
+        throw new Error('Database query failed');
+    }
+};
+
+const allAdmin = async () => {
+    const queries = await loadSqlQueries('user/sql');
+    const query = queries.allAdmin;
+
+    try {
+        const [result] = await pool.execute(query);
+        return result
+    } catch (error) {
+        console.error('Database query error:', error);
+        throw new Error('Database query failed');
+    }
+};
+
+
 const findById = async (userId) => {
     const queries = await loadSqlQueries('user/sql');
     const query = queries.getUserByID;
@@ -124,12 +152,12 @@ const createUser = async (newId, data) => {
         // Insert into the users table
         const [result] = await pool.execute(query, [
             newId,
-            data.role_id,
+            'ROLE002',
             data.fullname,
-            null, // birthday is set to null by default
+            data.birthday,
             data.phone_number,
             data.email,
-            data.license_id,
+            null,
             data.password,
             data.avatar || '/public/assets/Images/avatars/default_ava.png',
             data.deleted || 0 // Default deleted status
@@ -196,6 +224,8 @@ const updateUserStatus = async (id, isDisable = true) => {
 
 
 module.exports = {
+    allDriver,
+    allAdmin,
     findById,
     updateUserAva,
     updateUser,

@@ -1,6 +1,6 @@
 'use strict';
 
-const { driverCompleted, driverCancelled, driverRated, completedTrip, completedTripList, ongoingTripList, setComplete, getTripInfo } = require("../data/trip");
+const { driverCompleted, driverCancelled, driverRated, completedTrip, completedTripList, ongoingTripList, setComplete, getTripInfo, allTrips } = require("../data/trip");
 
 const getDriverCompleted = async (req, res) => {
     try {
@@ -44,7 +44,8 @@ const getCompletedTrip = async (req, res) => {
 
 const getCompletedTripList = async (req,res) => {
     try {
-        const result = await completedTripList();
+        const userId = req.cookies.userId;
+        const result = await completedTripList(userId);
         res.send(result);
     } catch (error) {
         res.status(400).send({ error: error.message });
@@ -53,7 +54,8 @@ const getCompletedTripList = async (req,res) => {
 
 const getOngoingTripList = async (req, res) => {
     try {
-        const result = await ongoingTripList();  
+        const userId = req.cookies.userId;
+        const result = await ongoingTripList(userId);  
         res.send(result); 
     } catch (error) {
         res.status(400).send({ error: error.message });
@@ -92,6 +94,15 @@ const setCompleteTrip = async (req, res) => {
     }
 }
 
+const getAllTrips = async (req, res) => {
+    try {
+        const result = await allTrips();
+        res.send(result);
+    } catch (error) {
+        res.status(400).send({ error: error.message });
+    }
+};
+
 module.exports = {
     getDriverCompleted,
     getDriverCancelled,
@@ -99,5 +110,6 @@ module.exports = {
     getCompletedTrip,
     getCompletedTripList,
     getOngoingTripList,
-    setCompleteTrip
+    setCompleteTrip,
+    getAllTrips
 };

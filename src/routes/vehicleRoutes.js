@@ -19,7 +19,7 @@ const router = express.Router();
 router.get('/get-all', getAllVehicle);
 router.post('/search', searchVehicle);
 router.post('/id', getById);
-router.post('/user-id', getByUserID);   //get by driver id
+router.post('/user-id', getByUserID);   
 router.post('/brand', getByBrandName);
 router.post('/license-plate', getByLicensePlate);
 router.put('/disable', disableVehicle); 

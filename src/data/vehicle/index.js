@@ -113,6 +113,24 @@ const addNewVehicle = async (newId, userId, device_id, vehicle_brand, vehicle_li
     }
 };
 
+const updateParkedAndKmPerDay = async (parked_time, km_per_day, device_id) => {
+    try {
+        const sqlQueries = await loadSqlQueries('vehicle/sql');
+        const time = parked_time.parked_time.toString()
+        //console.log('data in insert: ', parked_time.parked_time.toString(), km_per_day.km_per_day);
+        const update = await pool.execute(sqlQueries.updateParkedAndKmPerDay, [
+            time, 
+            km_per_day.km_per_day,
+            device_id
+        ]);
+        console.log("SQL Update Result:", update);
+        return update;
+    } catch (error) {
+        console.error("Error in update parked time and km per day:", error.message);
+        throw error;
+    }
+}
+
 
 const updateVehicleImg = async (id, thumbnail) => {
     try {
@@ -185,5 +203,6 @@ module.exports = {
     addNewVehicle,
     generateVehicleId,
     updateVehicleInfo,
-    deleteVehicle // Export the delete function
+    deleteVehicle,
+    updateParkedAndKmPerDay
 };

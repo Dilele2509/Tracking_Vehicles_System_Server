@@ -30,7 +30,7 @@ app.use(express.json());
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: 'http://103.77.209.93:3000',
   credentials: true,
 }));
 
@@ -66,17 +66,31 @@ const photoLicenseStorage = multer.diskStorage({
   }
 });
 
+const violationStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+      cb(null, 'public/assets/Images/violates/');
+  },
+  filename: function (req, file, cb) {
+      console.log(file);
+      cb(null, file.originalname);
+  },
+});
+
 const upload = multer({ storage: storage });
 const uploadThumbnail = multer({ storage: thumbnailStorage });
 const uploadPhoto = multer({ storage: photoLicenseStorage });
+const uploadViolate = multer({ storage: violationStorage });
 
 const {uploadAvatar} = require('./src/controllers/userController.js');
 const { addVehicle } = require('./src/controllers/vehicleController.js');
 const { addLicenseController, updateLicensePhoto } = require('./src/controllers/licenseController.js');
+const { addViolate} = require('./src/controllers/violateController.js')
+
 app.post('/api/user/upload-ava/', upload.single("avatar"), uploadAvatar );
 app.post('/api/vehicles/add', uploadThumbnail.single("thumbnail"), addVehicle);
 app.post('/api/license/add', uploadPhoto.single("id_card_photo"), addLicenseController);
 app.post('/api/license/update-photo', uploadPhoto.single("id_card_photo"), updateLicensePhoto);
+app.post('/api/violate/add', uploadViolate.single('violate_photo'), addViolate);
 
 // Serve static files
 app.use('/api/vehicles', vehicleRoutes);

@@ -1,7 +1,9 @@
 'use strict';
 
 const express = require('express');
-const { getInfoById, 
+const { getAllDriver,
+        getAllAdmin,
+        getInfoById, 
         updateUserInfo,
         checkPassword,
         updatePassword,
@@ -13,7 +15,8 @@ const { getInfoById,
 
 const router = express.Router();
 
-
+router.get('/get-all', getAllDriver);
+router.get('/get-all-admin', getAllAdmin);
 router.get('/get-info', getInfoById); 
 router.put('/update-info', updateUserInfo); 
 router.post('/check-password', checkPassword); 

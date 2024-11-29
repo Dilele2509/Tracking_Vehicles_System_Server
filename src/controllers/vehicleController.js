@@ -146,8 +146,6 @@ const addVehicle = async (req, res) => {
     } 
 };
 
-
-
 const updateVehicle = async (req, res) => {
     try {
         const data = req.body;

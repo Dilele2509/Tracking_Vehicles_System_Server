@@ -1,7 +1,7 @@
 'use strict';
 const nodemailer = require('nodemailer');
 const { findById } = require('../data/user');
-const { getViolateID } = require('../data/violate');
+const { getViolateID, addViolateInfo, updateViolateImg } = require('../data/violate');
 
 const getDriverViolate = async (req, res) => {
     try {
@@ -13,9 +13,10 @@ const getDriverViolate = async (req, res) => {
     }
 };
 
-const sendLetterMail = async (req, res) => {
+const sendWarningViolate = async (req, res) => {
     const { to } = req.body;
     const userId = req.cookies.userId;
+    const ipAddress = '103.77.209.93'
 
     try {
         const userInfo = await findById(userId);
@@ -42,7 +43,7 @@ const sendLetterMail = async (req, res) => {
             <p>https://www.facebook.com/vyle2509</p>
             <br/>
             <h4>Dưới đây là hình ảnh vi phạm của bạn:</h4>
-            <img style="max-width: 300px;" src="https://drive.google.com/u/0/drive-viewer/AKGpihYinszBxX250stIjxmDUI-TE9pkmF3m-6REr4OzO1HuNP6jc9gSLsgPxGjy2TFVgFaWvxqwFmQG4v9IlZ5Ukdhc2o9fMmTEtSc=s1600-rw-v1" alt="violate Image">
+            <img style="max-width: 300px;" src="http://${ipAddress}:3001${result[0].violate_photo}">
         `;
 
         let mailOptions = {
@@ -64,15 +65,58 @@ const sendLetterMail = async (req, res) => {
     }
 };
 
+const addViolate = async (req, res) => {
+    try {
+        const userId = req.cookies.userId;
+        if (!userId) {
+            return res.status(400).json({ message: 'User ID is required' });
+        }
+
+        // Destructure the data from the request body
+        const violate_photo = req.file;
+        console.log('file: ', req.file);
+        console.log('filenames: ', violate_photo.filename);
+
+        // Check if the violate_photo file is uploaded
+        if (!violate_photo) {
+            return res.status(400).json({ message: 'No file uploaded' });
+        }
+
+        // Insert the vehicle data
+        const insert = await addViolateInfo(userId);
+        console.log(insert);
+        if (insert.status === 200) {
+            const filePath = '/public/assets/Images/violates/' + violate_photo.filename;
+            // console.log('filePath: ' + filePath); 
+            const result = await updateViolateImg(insert.data.insertId, filePath); 
+
+            // Send the response
+            const combineRes = {
+                status: 200,
+                message: "Added successfully",
+                image: result,
+                insert: insert.result // Return the insert result if needed
+            };
+            return res.send(combineRes);
+        } else {
+            return res.status(400).send(insert);
+        }
+    } catch (error) {
+        console.error('Error in addViolate:', error.message); // Log the error
+        return res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     getDriverViolate,
-    sendLetterMail
+    sendWarningViolate,
+    addViolate
 };
 
 
 // pass: axzaintevseezvcc
-            // pass: 'ohfctdyjcbkvdqnw'
-            //pass: 'yilxfskzbkifijpz'
-            //pass: 'axzaintevseezvcc'
-            // for react app: yilxfskzbkifijpz
-            // for postman: axzaintevseezvcc
+// pass: 'ohfctdyjcbkvdqnw'
+//pass: 'yilxfskzbkifijpz'
+//pass: 'axzaintevseezvcc'
+// for react app: yilxfskzbkifijpz
+// for postman: axzaintevseezvcc

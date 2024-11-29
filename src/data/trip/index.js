@@ -59,25 +59,25 @@ const completedTrip = async (tripId) => {
     }
 };
 
-const completedTripList = async () => {
+const completedTripList = async (userID) => {
     try {
         const sqlQueries = await loadSqlQueries('trip/sql');
-        const [result] = await pool.query(sqlQueries.completedTripList)
+        const [result] = await pool.query(sqlQueries.completedTripList, [userID]);
         return result;
     } catch (error) {
-        console.error('Error fetching trip:', error.message);
-        throw new Error('Could not fetch trip');
+        console.error('Error fetching completed trip list:', error.message);
+        throw new Error('Could not fetch completed trip list:');
     }
 };
 
-const ongoingTripList = async () => {
+const ongoingTripList = async (userID) => {
     try {
         const sqlQueries = await loadSqlQueries('trip/sql');
-        const [result] = await pool.query(sqlQueries.ongoingTripList)
+        const [result] = await pool.query(sqlQueries.ongoingTripList, [userID])
         return result[0];
     } catch (error) {
-        console.error('Error fetching trip:', error.message);
-        throw new Error('Could not fetch trip');
+        console.error('Error fetching ongoing trip list:', error.message);
+        throw new Error('Could not fetch ongoing trip list');
     }
 };
 
@@ -122,6 +122,17 @@ const setComplete = async (tripInfo) => {
     }
 };
 
+const allTrips = async()=>{
+    try {
+        const sqlQueries = await loadSqlQueries('trip/sql');
+        const [result] = await pool.query(sqlQueries.allTrips);
+        return result;
+    } catch (error) {
+        console.error('Error fetching all trips:', error.message);
+        throw new Error('Could not fetch all trips');
+    }
+}
+
 module.exports = {
     driverCompleted,
     driverCancelled,
@@ -130,5 +141,6 @@ module.exports = {
     completedTripList,
     ongoingTripList,
     setComplete,
-    getTripInfo
+    getTripInfo,
+    allTrips,
 };

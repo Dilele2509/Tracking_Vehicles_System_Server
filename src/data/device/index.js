@@ -2,6 +2,7 @@
 
 const mysql = require('mysql2/promise');
 const config = require('../../../config.js');
+const { updateParkedAndKmPerDay } = require('../vehicle/index.js')
 const { loadSqlQueries } = require('../utils.js');
 const { broadcast } = require('../../services/websocketService.js')
 
@@ -48,9 +49,11 @@ const addNewData = async (data) => {
         // Get the current date and time
         const now = new Date();
 
-        // Convert to string formats
-        const date = now.toISOString().split('T')[0]; // Format as YYYY-MM-DD
-        const time = now.toTimeString().split(' ')[0]; // Format as HH:mm:ss
+        // Convert to local date and time formats
+        const date = now.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD (địa phương)
+        const time = now.toLocaleTimeString('en-GB', { hour12: false }); // Format as HH:mm:ss (địa phương, 24 giờ)
+
+        console.log('dateTime:', date, time);
 
         // Prepare data for insertion
         const addJson = {
@@ -62,7 +65,6 @@ const addNewData = async (data) => {
             RSSI: data.RSSI,
             speed: data.speed,
         }
-
         // Ensure that the query has placeholders for all the values
         const result = await pool.query(sqlQueries.addDataDevice, [
             addJson.device_id,
@@ -74,22 +76,87 @@ const addNewData = async (data) => {
             addJson.speed
         ]);
 
-        // Broadcast the data to clients via WebSocket
-        broadcast({ event: 'newData', data: addJson });
+        if (result[0].affectedRows) {
+            // Broadcast the data to clients via WebSocket
+            broadcast({ event: 'newData', data: addJson });
 
-        return {
-            status: 'success', // Make sure status is a string
-            result: result
-        };
+            const parkedTime = await calParkedTime(addJson)
+            const kmPerDay = await calKmPerDay(addJson)
+
+            console.log('parked time: ', parkedTime, ' km per day: ', kmPerDay);
+
+            try {
+                const updateVehicleInfo = await updateParkedAndKmPerDay(parkedTime, kmPerDay, addJson.device_id);
+                return {
+                    status: 'success', // Make sure status is a string
+                    result: result,
+                    updateVehicleInfo: updateVehicleInfo
+                };
+            } catch (error) {
+                console.error('Error updating vehicle info:', error.message);
+            }
+
+        } else {
+            throw new Error('Could not add data');
+        }
+
     } catch (error) {
         console.error('Error adding new data:', error.message);
         throw new Error('Could not add data');
     }
 };
 
+const calParkedTime = async (data) => {
+    try {
+        const sqlQueries = await loadSqlQueries('device/sql');
+        /* console.log('insert calParked data: ',data); */
+        const [result] = await pool.query(sqlQueries.calParkedTime, [
+            data.device_id,
+            data.date
+        ]);
+        if (result.length > 0) {
+            return result[0];
+        } else {
+            return {
+                device_id: data.device_id,
+                date: data.date,
+                parked_time: '00:00:00',
+            }
+        }
+    } catch (error) {
+        console.error('Error calculating parked time:', error.message);
+        throw new Error('Could not calculate parked time');
+    }
+}
+
+const calKmPerDay = async (data) => {
+    try {
+        const sqlQueries = await loadSqlQueries('device/sql');
+        /* console.log('insert calParked data: ', data); */
+        const [result] = await pool.query(sqlQueries.calKmPerDay, [
+            data.device_id,
+            data.date
+        ]);
+        if (result.length > 0) {
+            return result[0];
+        } else {
+            return {
+                device_id: data.device_id,
+                date: data.date,
+                km_per_day: 0
+            }
+        }
+    } catch (error) {
+        console.error('Error calculating Km per day:', error.message);
+        throw new Error('Could not calculate Km per day');
+    }
+}
+
 module.exports = {
     getDeviceById,
     getDataLatest,
     generateDeviceId,
-    addNewData
+    addNewData,
+    calParkedTime,
+    calKmPerDay
 };

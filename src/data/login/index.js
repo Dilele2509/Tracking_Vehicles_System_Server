@@ -7,8 +7,6 @@ const { loadSqlQueries } = require('../utils.js');
 const pool = mysql.createPool(config.sql);
 
 const checkLogin = async (data) => {
-
-    
     try {
 
         const sqlQueries = await loadSqlQueries('login/sql');

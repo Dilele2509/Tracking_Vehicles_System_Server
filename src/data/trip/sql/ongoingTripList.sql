@@ -1,1 +1,1 @@
-SELECT * FROM trips WHERE status = 'onGoing';
+SELECT * FROM trips WHERE status = 'onGoing' AND driver_id = ?;

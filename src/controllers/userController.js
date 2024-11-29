@@ -1,6 +1,8 @@
 'use strict';
 // const bcrypt = require('bcrypt');
 const {
+    allDriver,
+    allAdmin,
     findById,
     updateUser,
     updateUserAva,
@@ -12,6 +14,33 @@ const {
     deleteUser,
     updateUserStatus } = require('../data/user');
 
+const getAllDriver = async (req, res) => {
+    try {
+        const user = await allDriver();
+        if (!user) {
+            return res.status(404).json({ message: 'can not get all users' });
+        }
+
+        return res.send(user);
+    } catch (error) {
+        console.error('Error fetching user info:', error);
+        return res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+const getAllAdmin = async (req, res) => {
+    try {
+        const user = await allAdmin();
+        if (!user) {
+            return res.status(404).json({ message: 'can not get all admin' });
+        }
+
+        return res.send(user);
+    } catch (error) {
+        console.error('Error fetching user info:', error);
+        return res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
 
 const getInfoById = async (req, res) => {
     try {
@@ -42,23 +71,23 @@ const getInfoById = async (req, res) => {
 };
 
 
-const 
-updateUserInfo = async (req, res) => {
-    try {
-        const userId = req.cookies.userId;
-        if (!userId) {
-            return res.status(400).json({ message: 'User ID not found in cookies' });
+const
+    updateUserInfo = async (req, res) => {
+        try {
+            const userId = req.cookies.userId;
+            if (!userId) {
+                return res.status(400).json({ message: 'User ID not found in cookies' });
+            }
+
+            const updatedData = req.body;
+            const updatedUser = await updateUser(userId, updatedData);
+
+            return res.status(200).json(updatedUser);
+        } catch (error) {
+            console.error('Error updating user info:', error);
+            return res.status(500).json({ message: 'Server error', error: error.message });
         }
-
-        const updatedData = req.body;
-        const updatedUser = await updateUser(userId, updatedData);
-
-        return res.status(200).json(updatedUser);
-    } catch (error) {
-        console.error('Error updating user info:', error);
-        return res.status(500).json({ message: 'Server error', error: error.message });
-    }
-};
+    };
 
 const uploadAvatar = async (req, res, next) => {
     try {
@@ -137,8 +166,9 @@ const updatePassword = async (req, res) => {
 const addNewUser = async (req, res) => {
     try {
         const data = req.body;
+        console.log(data);
 
-        if (!data.role_id || !data.fullname || !data.email || !data.password) {
+        if (!data.fullname || !data.email || !data.birthday || !data.password) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
         const newId = await generateUserID();
@@ -208,15 +238,18 @@ const enableUser = async (req, res) => {
 }
 
 
-module.exports = { 
-    getInfoById, 
-    uploadAvatar, 
-    updateUserInfo, 
-    checkPassword, 
-    updatePassword, 
-    addNewUser, 
-    addLicenseId, 
-    deleteUserController, 
-    disableUser, 
-    enableUser };
+module.exports = {
+    getAllDriver,
+    getAllAdmin,
+    getInfoById,
+    uploadAvatar,
+    updateUserInfo,
+    checkPassword,
+    updatePassword,
+    addNewUser,
+    addLicenseId,
+    deleteUserController,
+    disableUser,
+    enableUser
+};
 

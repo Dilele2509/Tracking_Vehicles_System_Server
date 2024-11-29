@@ -1,3 +1,3 @@
-UPDATE vehicles
-SET thumbnail=?
+UPDATE violates
+SET information=?
 WHERE id=?
