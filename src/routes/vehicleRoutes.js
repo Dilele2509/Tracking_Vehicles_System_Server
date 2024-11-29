@@ -11,12 +11,14 @@ const {
     disableVehicle,
     enableVehicle,
     updateVehicle,
-    deleteVehicle 
+    deleteVehicle, 
+    getByDriverInput
 } = require('../controllers/vehicleController');
 
 const router = express.Router();
 
 router.get('/get-all', getAllVehicle);
+router.post('/get-driver', getByDriverInput)
 router.post('/search', searchVehicle);
 router.post('/id', getById);
 router.post('/user-id', getByUserID);   

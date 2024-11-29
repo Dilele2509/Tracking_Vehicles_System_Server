@@ -1,7 +1,16 @@
 'use strict';
 const nodemailer = require('nodemailer');
 const { findById } = require('../data/user');
-const { getViolateID, addViolateInfo, updateViolateImg } = require('../data/violate');
+const { getViolateID, addViolateInfo, updateViolateImg, allViolates } = require('../data/violate');
+
+const getAllViolates = async (req, res) => {
+    try {
+        const result = await allViolates();
+        res.send(result);
+    } catch (error) {
+        res.status(400).send({ error: error.message });
+    }
+};
 
 const getDriverViolate = async (req, res) => {
     try {
@@ -16,7 +25,7 @@ const getDriverViolate = async (req, res) => {
 const sendWarningViolate = async (req, res) => {
     const { to } = req.body;
     const userId = req.cookies.userId;
-    const ipAddress = '103.77.209.93'
+    const ipAddress = 'localhost'
 
     try {
         const userInfo = await findById(userId);
@@ -108,6 +117,7 @@ const addViolate = async (req, res) => {
 };
 
 module.exports = {
+    getAllViolates,
     getDriverViolate,
     sendWarningViolate,
     addViolate

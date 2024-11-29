@@ -44,6 +44,18 @@ const getById = async (req, res) => {
     }
 }
 
+const getByDriverInput = async (req, res) => {
+    try {
+        const {userId} = req.body;
+        /* console.log(userID); */
+        const vehicles = await getVehicleByUserID(userId);
+        console.log(vehicles);
+        res.send(vehicles);
+    } catch (error) {
+        res.status(400).send({ error: error.message });
+    }
+}
+
 
 //get vehicle base on driver_id
 const getByUserID = async (req, res) => {
@@ -81,6 +93,7 @@ const getByLicensePlate = async (req, res) => {
 const disableVehicle = async (req, res) => {
     try {
         const id = req.body.id;
+        console.log(id);
         const result = await updateVehicleStatus(id);
         if (result.affectedRows === 0) {
             return res.status(404).send({ error: 'Vehicle not found or already deleted.' });
@@ -176,6 +189,7 @@ const deleteVehicleController = async (req, res) => {
 
 module.exports = {
     getAllVehicle,
+    getByDriverInput,
     getById,
     searchVehicle,
     getByUserID,

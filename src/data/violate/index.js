@@ -6,6 +6,18 @@ const { loadSqlQueries } = require('../utils.js');
 
 const pool = mysql.createPool(config.sql);
 
+const allViolates = async () => {
+    try {
+        const sqlQueries = await loadSqlQueries('violate/sql');
+        const [result] = await pool.query(sqlQueries.allViolates);
+        return result;
+    } catch (error) {
+        console.error('Error fetching violates:', error.message);
+        throw new Error('Could not fetch violates');
+    }
+};
+
+
 const getViolateID = async (userId) => {
     try {
         const sqlQueries = await loadSqlQueries('violate/sql');
@@ -66,6 +78,7 @@ const updateViolateImg = async (id, information) => {
 }
 
 module.exports = {
+    allViolates,
     getViolateID,
     addViolateInfo,
     updateViolateImg

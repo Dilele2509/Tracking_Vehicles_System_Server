@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post('/user-login', loginController);
 router.get('/check-status/', checkLoginStatus);
-router.post('/logout', logout);
+router.get('/logout', logout);
 
 
 

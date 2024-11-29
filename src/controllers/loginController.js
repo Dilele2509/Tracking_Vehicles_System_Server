@@ -15,11 +15,7 @@ const loginController = async (req, res) => {
             console.log(userInfo)
             //console.log(userInfo[0].id);
             // Set the user ID in a cookie
-            res.cookie('userId', userInfo.id, {
-                httpOnly: true, // Ensures the cookie is only accessible by the server
-                secure: process.env.NODE_ENV === 'production', // Only set Secure flag in production
-                sameSite: 'None', // Needed for cross-origin cookies
-              });
+            res.cookie('userId', userInfo.id);
               
             return res.send(userInfo);
         } else {

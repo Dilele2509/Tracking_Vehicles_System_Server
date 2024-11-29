@@ -28,6 +28,17 @@ const getAllDriver = async (req, res) => {
     }
 };
 
+const getUserID = async (req, res) => {
+    try {
+        const {userId} = req.body
+        const user = await findById(userId);
+        return res.send(user);
+    } catch (error) {
+        console.error('Error fetching user info:', error);
+        return res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
 const getAllAdmin = async (req, res) => {
     try {
         const user = await allAdmin();
@@ -239,6 +250,7 @@ const enableUser = async (req, res) => {
 
 
 module.exports = {
+    getUserID,
     getAllDriver,
     getAllAdmin,
     getInfoById,

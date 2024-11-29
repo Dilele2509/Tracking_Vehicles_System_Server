@@ -11,13 +11,15 @@ const { getAllDriver,
         deleteUserController,
         disableUser,
         enableUser, 
-        addLicenseId} = require('../controllers/userController'); 
+        addLicenseId,
+        getUserID} = require('../controllers/userController'); 
 
 const router = express.Router();
 
 router.get('/get-all', getAllDriver);
 router.get('/get-all-admin', getAllAdmin);
 router.get('/get-info', getInfoById); 
+router.post('/get-user-id', getUserID);
 router.put('/update-info', updateUserInfo); 
 router.post('/check-password', checkPassword); 
 router.put('/update-password', updatePassword);

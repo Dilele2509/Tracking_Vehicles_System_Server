@@ -4,8 +4,19 @@ const { addLicense,
     generateLicenseId,
     updateLicense,
     deleteLicense,
-    getLicenseInfo, 
-    addLicensePhoto} = require('../data/license');
+    getLicenseInfo,
+    addLicensePhoto } = require('../data/license');
+
+const getByDriverInput = async (req, res) => {
+    const {userId} = req.body;
+
+    try {
+        const result = await getLicenseInfo(userId);
+        res.send(result[0]);
+    } catch (error) {
+        return res.status(400).json({ status: 'fail', message: error.message });
+    }
+}
 
 const addLicenseController = async (req, res) => {
 
@@ -40,7 +51,7 @@ const addLicenseController = async (req, res) => {
 };
 
 const updateLicensePhoto = async (req, res) => {
-    const {licenseId} = req.body;
+    const { licenseId } = req.body;
     const photo = req.file;
 
     if (!photo) {
@@ -100,6 +111,7 @@ const deleteLicenseController = async (req, res) => {
 };
 
 module.exports = {
+    getByDriverInput,
     addLicenseController,
     updateLicensePhoto,
     getLicenseByUser,
