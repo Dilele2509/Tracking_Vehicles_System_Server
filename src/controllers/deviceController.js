@@ -28,8 +28,12 @@ const getLastById = async (req, res) => {
 const addDataDevice = async (req, res) => {
     try {
         const data = req.body;
-        const result = await addNewData(data);
-        res.send(result);
+        if(data.latitude === 0 && data.longitude === 0){
+            res.send("Please waiting for data, device has not ready yet!")
+        }else{
+            const result = await addNewData(data);
+            res.send(result);
+        }
     } catch (error) {
         console.error('Error in addDataDevice:', error.message); // Log the error
         return res.status(500).json({ message: error.message });
