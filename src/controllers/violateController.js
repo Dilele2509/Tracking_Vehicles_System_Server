@@ -25,7 +25,7 @@ const getDriverViolate = async (req, res) => {
 const sendWarningViolate = async (req, res) => {
     const { to } = req.body;
     const userId = req.cookies.userId;
-    const ipAddress = '103.77.209.93'
+    const ipAddress = 'localhost'
 
     try {
         const userInfo = await findById(userId);
@@ -96,7 +96,7 @@ const addViolate = async (req, res) => {
         console.log(insert);
         if (insert.status === 200) {
             const filePath = '/public/assets/Images/violates/' + violate_photo.filename;
-            // console.log('filePath: ' + filePath); 
+            console.log('filePath: ' + filePath); 
             const result = await updateViolateImg(insert.data.insertId, filePath); 
 
             // Send the response
