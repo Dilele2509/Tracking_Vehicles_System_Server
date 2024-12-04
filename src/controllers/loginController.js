@@ -9,10 +9,11 @@ const loginController = async (req, res) => {
         const data = req.body;
         const { email, password } = data;
         const login = await checkLogin(data);
+        console.log('login: ', login);
         if (login === 1) {
             const userInfo = await getUserByEmail(email);
 
-            console.log(userInfo)
+            console.log('userInfo: ', userInfo)
             //console.log(userInfo[0].id);
             // Set the user ID in a cookie
             res.cookie('userId', userInfo.id);

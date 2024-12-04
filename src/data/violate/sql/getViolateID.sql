@@ -1,1 +1,1 @@
-SELECT * FROM violates WHERE user_id = ?
+SELECT * FROM violates WHERE id = ?

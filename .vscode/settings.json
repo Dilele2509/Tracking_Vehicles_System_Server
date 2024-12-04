@@ -1,0 +1,18 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "45.252.251.19",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "vehicle_tracking",
+            "database": "wseometc_vehicle_tracking_db",
+            "username": "wseometc_admin",
+            "password": "Lytranquocuy@123"
+        }
+    ]
+}

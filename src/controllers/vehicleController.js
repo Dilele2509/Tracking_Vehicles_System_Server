@@ -119,15 +119,10 @@ const enableVehicle = async (req, res) => {
 
 const addVehicle = async (req, res) => {
      try {
-        const userId = req.cookies.userId;
-        if (!userId) {
-            return res.status(400).json({ message: 'User ID is required' });
-        }
         const newId = await generateVehicleId();
-
-
         // Destructure the data from the request body
-        const {device_id, vehicle_brand, vehicle_line, license_plate} = req.body;
+        const data = JSON.parse(req.body.data);
+        const {device_id, vehicle_brand, vehicle_line, license_plate} = data;
         const thumbnail = req.file;
 
         // Check if the thumbnail file is uploaded
@@ -136,11 +131,10 @@ const addVehicle = async (req, res) => {
         }
 
         // Insert the vehicle data
-        const insert = await addNewVehicle(newId, userId, device_id, vehicle_brand, vehicle_line, license_plate);
+        const insert = await addNewVehicle(newId, device_id, vehicle_brand, vehicle_line, license_plate);
         if (insert.status === 'success') {
-            const filePath = '/public/assets/Images/vehicles/' + thumbnail.filename;
             /* console.log('filePath: ' + filePath); */
-            const result = await updateVehicleImg(newId, filePath); // Use newId instead of id
+            const result = await updateVehicleImg(newId, thumbnail.filename); // Use newId instead of id
 
             // Send the response
             const combineRes = {
@@ -159,21 +153,44 @@ const addVehicle = async (req, res) => {
     } 
 };
 
+const updateVehicleThumbnail = async (req, res) => {
+    try {
+        const { id } = req.body;
+        const thumbnail = req.file;
+
+        /* console.log(id, thumbnail.filename); */
+        // Check if the thumbnail file is uploaded
+        if (!thumbnail) {
+            return res.status(400).json({ message: 'No file uploaded' });
+        }
+
+        const result = await updateVehicleImg(id, thumbnail.filename); 
+        console.log(result);
+        return res.send({
+            status: 200,
+            result: result
+        });
+    } catch (error) {
+        console.error('Error in updateVehicleImg:', error.message); // Log the error
+        throw new Error('Error updating vehicle image');
+    }
+}
+
 const updateVehicle = async (req, res) => {
     try {
         const data = req.body;
+        console.log('data: ',data);
         const result = await updateVehicleInfo(data);
 
         if (result.affectedRows === 0) {
             return res.status(404).send({ status: 'fail' });
         }
 
-        res.send({ status: 'success', update: result });
+        res.send({ status: 200, update: result });
     } catch (error) {
         res.status(400).send({ status: 'fail', error: error.message });
     }
 };
-
 
 // Controller function to delete a vehicle
 const deleteVehicleController = async (req, res) => {
@@ -199,5 +216,6 @@ module.exports = {
     enableVehicle,
     addVehicle,
     updateVehicle,
+    updateVehicleThumbnail,  
     deleteVehicle: deleteVehicleController // Export the delete function
 };

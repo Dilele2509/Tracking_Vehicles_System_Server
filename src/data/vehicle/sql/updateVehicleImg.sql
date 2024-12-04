@@ -1,3 +1,3 @@
-UPDATE violates
-SET information=?
+UPDATE vehicles
+SET thumbnail=?
 WHERE id=?

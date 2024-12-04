@@ -52,7 +52,13 @@ const getUserByEmail = async (email) => {
 
     try {
         const [result] = await pool.execute(query, [email]);
-        return result[0]
+        if(result[0].deleted === 0){
+            return result[0]
+        }else{
+            return({ 
+                status: 'Error',
+                message: 'this account has been disabled'})
+        }
     } catch (error) {
         console.error('Database query error:', error);
         throw new Error('Database query failed');
@@ -108,6 +114,39 @@ const updateUser = async (userId, data) => {
     }
 };
 
+const adminUpdate = async (data) => {
+    const queries = await loadSqlQueries('user/sql');
+    const query = queries.updateUserByID;
+    const selectQuery = queries.getUserByID;
+
+    const userData = data.userData;  // Access userData from the data object
+    //console.log('Data being passed to query:', userData);
+
+    // Validate data
+    if (!userData.fullname || !userData.birthday || !userData.phone_number || !userData.email || !userData.id) {
+        throw new Error('Missing required fields');
+    }
+
+    try {
+        // Execute the update query
+        await pool.execute(query, [
+            userData.fullname || null,
+            userData.birthday || null,
+            userData.phone_number || null,
+            userData.email || null,
+            userData.id
+        ]);
+
+        // Now select the updated user information
+        const [selectResult] = await pool.execute(selectQuery, [userData.id]);
+
+        //console.log('Updated user information:', selectResult[0]);
+        return selectResult[0];
+    } catch (error) {
+        console.error('Database update error:', error);
+        throw new Error('Database update failed');
+    }
+};
 
 const checkUserPassword = async (userId) => {
     const user = await findById(userId);
@@ -229,6 +268,7 @@ module.exports = {
     findById,
     updateUserAva,
     updateUser,
+    adminUpdate,
     checkUserPassword,
     updatePasswordByID,
     createUser,

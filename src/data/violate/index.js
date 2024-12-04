@@ -18,11 +18,11 @@ const allViolates = async () => {
 };
 
 
-const getViolateID = async (userId) => {
+const getViolateID = async (id) => {
     try {
         const sqlQueries = await loadSqlQueries('violate/sql');
         const [result] = await pool.query(sqlQueries.getViolateID, [
-            userId,
+            id,
         ]);
         return result;
     } catch (error) {

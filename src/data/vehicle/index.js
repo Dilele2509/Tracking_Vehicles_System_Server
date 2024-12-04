@@ -91,14 +91,14 @@ const updateVehicleStatus = async (id, isDisable = true) => {
 }
 
 
-const addNewVehicle = async (newId, userId, device_id, vehicle_brand, vehicle_line, license_plate) => {
+const addNewVehicle = async (newId, device_id, vehicle_brand, vehicle_line, license_plate) => {
     try {
-        /* console.log('newid: ' + newId, 'userId: ' + userId, device_id, vehicle_brand, vehicle_line, license_plate); */
+        console.log('newid: ' + newId, device_id, vehicle_brand, vehicle_line, license_plate);
         const sqlQueries = await loadSqlQueries('vehicle/sql');
         const result = await pool.query(sqlQueries.addVehicle, [ 
             newId,          // id
             device_id,     // device_id
-            userId,       // user_id
+            null,       // user_id
             vehicle_brand, // vehicle_brand
             vehicle_line,  // vehicle_line
             license_plate, // license_plate
@@ -135,9 +135,11 @@ const updateParkedAndKmPerDay = async (parked_time, km_per_day, device_id) => {
 const updateVehicleImg = async (id, thumbnail) => {
     try {
         const sqlQueries = await loadSqlQueries('vehicle/sql');
-        console.log('thumbnail:', thumbnail, 'userId:', id); 
-        const update = await pool.execute(sqlQueries.updateVehicleImg, [thumbnail, id]);
-        console.log("SQL Update Result:", update);
+        //console.log('thumbnail:', thumbnail, 'userId:', id); 
+        const filePath = '/public/assets/Images/vehicles/' + thumbnail;
+        //console.log('filePath:', filePath);
+        const update = await pool.execute(sqlQueries.updateVehicleImg, [filePath, id]);
+        //console.log("SQL Update Result:", update);
         return update;
     } catch (error) {
         console.error("Error in update thumbnail vehicle:", error.message);
@@ -157,19 +159,14 @@ const generateVehicleId = async () => {
 const updateVehicleInfo = async (data) => {
     try {
         const sqlQueries = await loadSqlQueries('vehicle/sql');
-        const locationWKT = `POINT(${data.location.longitude} ${data.location.latitude})`;
+        //console.log(data);
+        /* const locationWKT = `POINT(${data.location.longitude} ${data.location.latitude})`; */
         const result = await pool.query(sqlQueries.updateVehicle, [ 
             data.device_id,
             data.user_id,
             data.vehicle_brand,
             data.vehicle_line,
-            data.thumbnail,
             data.license_plate,
-            locationWKT, 
-            data.status,
-            data.parked_time,
-            data.km_per_day,
-            data.deleted,
             data.id 
         ]);
         return result; 

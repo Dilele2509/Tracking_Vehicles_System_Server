@@ -1,6 +1,6 @@
 'use strict';
 
-const { statisticDate, statisticMonth, statisticYear, getIncomeID } = require('../data/income');
+const { statisticDate, statisticMonth, statisticYear, getIncomeID, companyIncome, driverIncome, statisticRate, statisticDriver } = require('../data/income');
 
 const getStatisticDate = async (req, res) => {
     try {
@@ -48,9 +48,49 @@ const getIncomeDriver = async (req, res) => {
     }
 }
 
+const getCompanyIncome = async (req, res) => {
+    try {
+        const result = await companyIncome();
+        res.send(result);
+    } catch (error) {
+        res.status(400).send({ error: error.message });
+    }
+}
+
+const getDriverIncome = async (req, res) => {
+    try {
+        const result = await driverIncome();
+        res.send(result);
+    } catch (error) {
+        res.status(400).send({ error: error.message });
+    }
+}
+
+const getStatisticRate = async (req, res) => {
+    try {
+        const result = await statisticRate();
+        res.send(result);
+    } catch (error) {
+        res.status(400).send({ error: error.message });
+    }
+}
+
+const getStatisticDriver = async (req, res) => {
+    try {
+        const result = await statisticDriver();
+        res.send(result);
+    } catch (error) {
+        res.status(400).send({ error: error.message });
+    }
+}
+
 module.exports = {
     getStatisticDate,
     getStatisticMonth,
     getStatisticYear,
-    getIncomeDriver
+    getIncomeDriver,
+    getCompanyIncome,
+    getDriverIncome,
+    getStatisticRate,
+    getStatisticDriver
 };

@@ -82,12 +82,13 @@ const uploadPhoto = multer({ storage: photoLicenseStorage });
 const uploadViolate = multer({ storage: violationStorage });
 
 const {uploadAvatar} = require('./src/controllers/userController.js');
-const { addVehicle } = require('./src/controllers/vehicleController.js');
+const { addVehicle, updateVehicleThumbnail } = require('./src/controllers/vehicleController.js');
 const { addLicenseController, updateLicensePhoto } = require('./src/controllers/licenseController.js');
 const { addViolate} = require('./src/controllers/violateController.js')
 
 app.post('/api/user/upload-ava/', upload.single("avatar"), uploadAvatar );
 app.post('/api/vehicles/add', uploadThumbnail.single("thumbnail"), addVehicle);
+app.post('/api/vehicles/update-thumbnail', uploadThumbnail.single("thumbnail"), updateVehicleThumbnail);
 app.post('/api/license/add', uploadPhoto.single("id_card_photo"), addLicenseController);
 app.post('/api/license/update-photo', uploadPhoto.single("id_card_photo"), updateLicensePhoto);
 app.post('/api/violate/add', uploadViolate.single('violate_photo'), addViolate);

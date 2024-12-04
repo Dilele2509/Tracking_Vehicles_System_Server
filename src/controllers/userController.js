@@ -12,7 +12,8 @@ const {
     addLicenseIdToUser,
     generateUserID,
     deleteUser,
-    updateUserStatus } = require('../data/user');
+    updateUserStatus, 
+    adminUpdate} = require('../data/user');
 
 const getAllDriver = async (req, res) => {
     try {
@@ -30,7 +31,7 @@ const getAllDriver = async (req, res) => {
 
 const getUserID = async (req, res) => {
     try {
-        const {userId} = req.body
+        const { userId } = req.body
         const user = await findById(userId);
         return res.send(user);
     } catch (error) {
@@ -82,23 +83,35 @@ const getInfoById = async (req, res) => {
 };
 
 
-const
-    updateUserInfo = async (req, res) => {
-        try {
-            const userId = req.cookies.userId;
-            if (!userId) {
-                return res.status(400).json({ message: 'User ID not found in cookies' });
-            }
-
-            const updatedData = req.body;
-            const updatedUser = await updateUser(userId, updatedData);
-
-            return res.status(200).json(updatedUser);
-        } catch (error) {
-            console.error('Error updating user info:', error);
-            return res.status(500).json({ message: 'Server error', error: error.message });
+const updateUserInfo = async (req, res) => {
+    try {
+        const userId = req.cookies.userId;
+        if (!userId) {
+            return res.status(400).json({ message: 'User ID not found in cookies' });
         }
-    };
+
+        const updatedData = req.body;
+        const updatedUser = await updateUser(userId, updatedData);
+
+        return res.status(200).json(updatedUser);
+    } catch (error) {
+        console.error('Error updating user info:', error);
+        return res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+const adminUpdateUser = async (req, res) => {
+    try {
+        const data = req.body;
+        const updatedUser = await adminUpdate(data);
+
+        //console.log('result updated: ', updatedUser);
+        return res.status(200).json(updatedUser);
+    } catch (error) {
+        console.error('Error updating user info:', error);
+        return res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
 
 const uploadAvatar = async (req, res, next) => {
     try {
@@ -256,6 +269,7 @@ module.exports = {
     getInfoById,
     uploadAvatar,
     updateUserInfo,
+    adminUpdateUser,
     checkPassword,
     updatePassword,
     addNewUser,

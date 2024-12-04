@@ -1,4 +1,5 @@
 SELECT 
+    driver_id,
     ROUND(
         100 * COUNT(CASE WHEN status = 'Completed' THEN 1 END) / 
         COUNT(CASE WHEN status IN ('Completed', 'Cancelled') THEN 1 END),
@@ -6,7 +7,5 @@ SELECT
     ) AS success_rate_percentage
 FROM 
     trips
-WHERE 
-    driver_id = 'USER001'
 GROUP BY 
     driver_id;
