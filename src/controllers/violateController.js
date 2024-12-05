@@ -103,9 +103,9 @@ const sendWarningViolate = async (to, id, userId) => {
         <span style="color: red; font-weight: 500;">${result[0].date}</span>
     </p>
     <h4>Dưới đây là hình ảnh vi phạm của bạn:</h4>
-    <img style="max-width: 300px;" src="http://${ipAddress}:3001${result[0].violate_photo}">
+    <img style="max-width: 300px;" src="http://${ipAddress}:3001${result[0].information}">
 `;
-        console.log('http://',ipAddress,':3001',result[0],'.violate_photo');
+        console.log('http://',ipAddress,':3001',result[0].information);
 
         const mailOptions = {
             from: 'levy3443@gmail.com',
