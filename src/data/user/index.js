@@ -85,8 +85,8 @@ const updateUser = async (userId, data) => {
     const queries = await loadSqlQueries('user/sql');
     const query = queries.updateUserByID;
     const selectQuery = queries.getUserByID;
-
-    /* console.log(data.birthday); */
+    /* console.log('data get in data layer:', data);
+    console.log(data.birthday, 'data type:', typeof(data.birthday)); */
     // Format the birthday
     const formatted = formatDateForMySQL(data.birthday); 
     console.log('formatting: ' + formatted);

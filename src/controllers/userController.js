@@ -85,12 +85,13 @@ const getInfoById = async (req, res) => {
 
 const updateUserInfo = async (req, res) => {
     try {
+        const updatedData = req.body;
+        console.log(updatedData);
         const userId = req.cookies.userId;
+        console.log('userid: ',userId);
         if (!userId) {
             return res.status(400).json({ message: 'User ID not found in cookies' });
         }
-
-        const updatedData = req.body;
         const updatedUser = await updateUser(userId, updatedData);
 
         return res.status(200).json(updatedUser);
@@ -132,7 +133,7 @@ const uploadAvatar = async (req, res, next) => {
         /* console.log('File uploaded: ', req.file); */
 
         const filePath = '/public/assets/Images/avatars/' + req.file.filename;
-        /* console.log("File path:", filePath); */
+        console.log("File path:", filePath);
 
         const result = await updateUserAva(userId, filePath);
         /* console.log("Database update result:", result); */
