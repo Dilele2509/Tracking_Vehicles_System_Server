@@ -31,9 +31,9 @@ const addLicense = async (newID, data) => {
 const addLicensePhoto = async (license_id, photo) =>{
     try {
         const sqlQueries = await loadSqlQueries('license/sql');
-        console.log('photo:', photo, 'license_id:', license_id); 
+        //console.log('photo:', photo, 'license_id:', license_id); 
         const update = await pool.execute(sqlQueries.updatelicenseImg, [photo, license_id]);
-        console.log("SQL Update Result:", update);
+        //console.log("SQL Update Result:", update);
         return update;
     } catch (error) {
         console.error("Error in update photo license:", error.message);

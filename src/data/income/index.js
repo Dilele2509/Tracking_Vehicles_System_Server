@@ -162,7 +162,7 @@ const statisticDriver = async () => {
             };
         });
 
-        console.log(mergedData);
+        //console.log(mergedData);
         return mergedData;
     } catch (error) {
         console.error('Error fetching driver statistics:', error.message);

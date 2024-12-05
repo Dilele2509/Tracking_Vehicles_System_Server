@@ -43,8 +43,8 @@ const generateDeviceId = async () => {
 const addNewData = async (data) => {
     try {
         const sqlQueries = await loadSqlQueries('device/sql');
-        console.log('data: ', data);
-        console.log('sqlQueries: ', sqlQueries.addDataDevice);
+        //console.log('data: ', data);
+        //console.log('sqlQueries: ', sqlQueries.addDataDevice);
 
         // Get the current date and time
         const now = new Date();
@@ -53,7 +53,7 @@ const addNewData = async (data) => {
         const date = now.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD (địa phương)
         const time = now.toLocaleTimeString('en-GB', { hour12: false }); // Format as HH:mm:ss (địa phương, 24 giờ)
 
-        console.log('dateTime:', date, time);
+        //console.log('dateTime:', date, time);
 
         // Prepare data for insertion
         const addJson = {
@@ -83,7 +83,7 @@ const addNewData = async (data) => {
             const parkedTime = await calParkedTime(addJson)
             const kmPerDay = await calKmPerDay(addJson)
 
-            console.log('parked time: ', parkedTime, ' km per day: ', kmPerDay);
+            //console.log('parked time: ', parkedTime, ' km per day: ', kmPerDay);
 
             try {
                 const updateVehicleInfo = await updateParkedAndKmPerDay(parkedTime, kmPerDay, addJson.device_id);

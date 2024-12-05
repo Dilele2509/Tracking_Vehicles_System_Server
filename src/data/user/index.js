@@ -86,11 +86,11 @@ const updateUser = async (userId, data) => {
     const query = queries.updateUserByID;
     const selectQuery = queries.getUserByID;
     /* console.log('data get in data layer:', data);
-    console.log(data.birthday, 'data type:', typeof(data.birthday)); */
+    //console.log(data.birthday, 'data type:', typeof(data.birthday)); */
     // Format the birthday
     const formatted = formatDateForMySQL(data.birthday); 
-    console.log('formatting: ' + formatted);
-    console.log("Current timezone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
+    //console.log('formatting: ' + formatted);
+    //console.log("Current timezone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
 
 
     try {
@@ -106,10 +106,10 @@ const updateUser = async (userId, data) => {
         // Now select the updated user information
         const [selectResult] = await pool.execute(selectQuery, [userId]);
 
-        console.log('Updated user information:', selectResult[0]);
+        //console.log('Updated user information:', selectResult[0]);
         return selectResult[0];
     } catch (error) {
-        console.error('Database update error:', error);
+        //console.error('Database update error:', error);
         throw new Error('Database update failed');
     }
 };

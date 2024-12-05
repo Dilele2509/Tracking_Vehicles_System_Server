@@ -93,7 +93,7 @@ const updateVehicleStatus = async (id, isDisable = true) => {
 
 const addNewVehicle = async (newId, device_id, vehicle_brand, vehicle_line, license_plate) => {
     try {
-        console.log('newid: ' + newId, device_id, vehicle_brand, vehicle_line, license_plate);
+        //console.log('newid: ' + newId, device_id, vehicle_brand, vehicle_line, license_plate);
         const sqlQueries = await loadSqlQueries('vehicle/sql');
         const result = await pool.query(sqlQueries.addVehicle, [ 
             newId,          // id
@@ -123,7 +123,7 @@ const updateParkedAndKmPerDay = async (parked_time, km_per_day, device_id) => {
             km_per_day.km_per_day,
             device_id
         ]);
-        console.log("SQL Update Result:", update);
+        //console.log("SQL Update Result:", update);
         return update;
     } catch (error) {
         console.error("Error in update parked time and km per day:", error.message);

@@ -49,7 +49,7 @@ const getByDriverInput = async (req, res) => {
         const {userId} = req.body;
         /* console.log(userID); */
         const vehicles = await getVehicleByUserID(userId);
-        console.log(vehicles);
+        //console.log(vehicles);
         res.send(vehicles);
     } catch (error) {
         res.status(400).send({ error: error.message });
@@ -63,7 +63,7 @@ const getByUserID = async (req, res) => {
         const userID = req.cookies.userId;
         /* console.log(userID); */
         const vehicles = await getVehicleByUserID(userID);
-        console.log(vehicles);
+        //console.log(vehicles);
         res.send(vehicles);
     } catch (error) {
         res.status(400).send({ error: error.message });
@@ -93,7 +93,7 @@ const getByLicensePlate = async (req, res) => {
 const disableVehicle = async (req, res) => {
     try {
         const id = req.body.id;
-        console.log(id);
+        //console.log(id);
         const result = await updateVehicleStatus(id);
         if (result.affectedRows === 0) {
             return res.status(404).send({ error: 'Vehicle not found or already deleted.' });
@@ -165,7 +165,7 @@ const updateVehicleThumbnail = async (req, res) => {
         }
 
         const result = await updateVehicleImg(id, thumbnail.filename); 
-        console.log(result);
+        //console.log(result);
         return res.send({
             status: 200,
             result: result
@@ -179,7 +179,7 @@ const updateVehicleThumbnail = async (req, res) => {
 const updateVehicle = async (req, res) => {
     try {
         const data = req.body;
-        console.log('data: ',data);
+        //console.log('data: ',data);
         const result = await updateVehicleInfo(data);
 
         if (result.affectedRows === 0) {

@@ -71,7 +71,7 @@ const violationStorage = multer.diskStorage({
       cb(null, 'public/assets/Images/violates/');
   },
   filename: function (req, file, cb) {
-      console.log(file);
+      //console.log(file);
       cb(null, file.originalname);
   },
 });

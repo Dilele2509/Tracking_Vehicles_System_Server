@@ -33,7 +33,7 @@ const getViolateID = async (id) => {
 
 const addViolateInfo = async (userId) => {
     try {
-        console.log('userId: ', userId);
+        //console.log('userId: ', userId);
         const sqlQueries = await loadSqlQueries('violate/sql');
         // Get the current date and time
         const now = new Date();
@@ -42,7 +42,7 @@ const addViolateInfo = async (userId) => {
         const date = now.toLocaleDateString('en-CA'); // Format as YYYY-MM-DD (local)
         const time = now.toLocaleTimeString('en-GB', { hour12: false }); // Format as HH:mm:ss (24-hour format)
 
-        console.log('dateTime:', date, time);
+        //console.log('dateTime:', date, time);
         const result = await pool.query(sqlQueries.addViolate, [
             userId,
             date,
@@ -67,9 +67,9 @@ const addViolateInfo = async (userId) => {
 const updateViolateImg = async (id, information) => {
     try {
         const sqlQueries = await loadSqlQueries('violate/sql');
-        console.log('information:', information, 'id:', id);
+        //console.log('information:', information, 'id:', id);
         const update = await pool.execute(sqlQueries.updateViolateImg, [information, id]);
-        console.log("SQL Update Result:", update);
+        //console.log("SQL Update Result:", update);
         return update;
     } catch (error) {
         console.error("Error in update information violate:", error.message);

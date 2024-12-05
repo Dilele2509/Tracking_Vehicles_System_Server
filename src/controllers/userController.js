@@ -86,9 +86,9 @@ const getInfoById = async (req, res) => {
 const updateUserInfo = async (req, res) => {
     try {
         const updatedData = req.body;
-        console.log(updatedData);
+        //console.log(updatedData);
         const userId = req.cookies.userId;
-        console.log('userid: ',userId);
+        //console.log('userid: ',userId);
         if (!userId) {
             return res.status(400).json({ message: 'User ID not found in cookies' });
         }
@@ -133,7 +133,7 @@ const uploadAvatar = async (req, res, next) => {
         /* console.log('File uploaded: ', req.file); */
 
         const filePath = '/public/assets/Images/avatars/' + req.file.filename;
-        console.log("File path:", filePath);
+        //console.log("File path:", filePath);
 
         const result = await updateUserAva(userId, filePath);
         /* console.log("Database update result:", result); */
@@ -191,7 +191,7 @@ const updatePassword = async (req, res) => {
 const addNewUser = async (req, res) => {
     try {
         const data = req.body;
-        console.log(data);
+        //console.log(data);
 
         if (!data.fullname || !data.email || !data.birthday || !data.password) {
             return res.status(400).json({ message: 'Missing required fields' });
