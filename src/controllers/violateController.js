@@ -26,7 +26,7 @@ const getDriverViolate = async (req, res) => {
 /* const sendWarningViolate = async (req, res) => {
     const { to } = req.body;
     const userId = req.cookies.userId;
-    const ipAddress = 'localhost'
+    const ipAddress = '103.77.209.110'
 
     try {
         const userInfo = await findById(userId);
@@ -76,7 +76,7 @@ const getDriverViolate = async (req, res) => {
 }; */
 
 const sendWarningViolate = async (to, id, userId) => {
-    const ipAddress = 'localhost';
+    const ipAddress = '103.77.209.110';
     try {
         const userInfo = await findById(userId);
         const result = await getViolateID(id);
